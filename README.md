@@ -1,18 +1,14 @@
-# CloudPhone Web Client & Gateway 📱⚡
+# CloudPhone Web Client and Gateway
 
-[![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black?style=flat-square&logo=next.js)](https://nextjs.org/)
-[![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go&logoColor=white)](https://go.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=flat-square&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
-
-A high-performance, web-based Android streaming and rental platform. This platform allows users to rent Android devices, control them directly in the browser via low-latency video streaming (powered by `scrcpy` and WebSockets/WebRTC), make automated payments via **Pakasir Payment Gateway**, and redeem custom vouchers.
+A web-based Android streaming and rental platform. This system enables users to rent Android devices, control them in the browser via low-latency screen sharing (powered by Scrcpy and WebRTC/WebSockets), make automated payments using the Pakasir Payment Gateway, and redeem custom vouchers.
 
 ---
 
-## 🏗️ Architecture Overview
+## 1. System Architecture
 
-The system consists of two primary services:
+The project is split into two primary components: the **Go Gateway & Billing Backend** and the **Next.js & Node.js Streaming Client**.
 
+### Architecture Diagram
 ```mermaid
 graph TD
     User([Browser Client]) -->|HTTP / WebRTC| NextJS[Next.js Frontend & Node.js Server]
@@ -23,76 +19,76 @@ graph TD
     GoBackend -->|Webhooks| Pakasir[Pakasir Payment Gateway]
 ```
 
-1. **Next.js & Node.js Server (Ports 3000 / 8000)**: 
-   - Handles low-latency video streaming (`scrcpy-server` over WebSockets/WebRTC).
-   - Interactive user control (keyboard/mouse capture, clipboard synchronization).
-   - Connects directly to local or network-attached Android devices via ADB.
-2. **Go Backend (Port 8080)**:
-   - Handles user session management and authentication via **Google OAuth**.
-   - Integrates with the **Pakasir API** for billing and checkout transactions.
-   - Hosts the secure **Redemption Voucher System** for custom device durations and RAM tiers (4GB, 6GB, 8GB).
-   - Database operations (SQLite + GORM).
+### Component Details
+| Component | Directory | Port | Technology Stack | Key Responsibilities |
+| :--- | :--- | :--- | :--- | :--- |
+| **Go Backend Gateway** | `/frontend` | `8080` | Go, SQLite (GORM), Gorilla Sessions, Goth | User sessions, Google OAuth authentication, billing gateway API, voucher redemption logic |
+| **Next.js Client** | `/app`, `/components` | `3000` | Next.js, React, TailwindCSS, Framer Motion | Modern dashboard UI, device specs view, device rent/interaction page |
+| **Node.js ADB Proxy** | `/server.ts`, `/lib` | `8000` | Node.js, WebSockets, `@yume-chan/scrcpy` | ADB daemon communication, WebSocket proxy for Scrcpy stream, screen control translation |
 
 ---
 
-## ✨ Key Features
+## 2. Key Features
 
-- 🖥️ **Low-Latency Screen Streaming**: High-quality video feed using WebRTC or Webcodecs decoding directly inside the browser.
-- ⌨️ **Interactive Controls**: Touch, click, scroll, and type on the remote Android screen with full clipboard sync.
-- 💳 **Automated Checkout**: Instant billing integration via Pakasir (DOKU) supporting QRIS, bank transfers, etc.
-- 🎁 **Redemption System**: Voucher-code system to rent new devices or extend current subscriptions by hardware tier (4GB, 6GB, 8GB RAM).
-- 🔑 **Google OAuth**: Fast and secure authentication.
+- **Low-Latency Screen Streaming**: High-quality video feed using WebRTC or Webcodecs decoding directly inside the browser window.
+- **Interactive Device Control**: Mouse, touch, scroll, and keyboard events are translated and sent to the remote Android device. Includes full clipboard synchronization.
+- **Automated Payment Integration**: Immediate checkout flow integrated with the Pakasir API (QRIS, bank transfers, etc.).
+- **Voucher Redemption System**: A system to rent devices or extend current subscriptions by hardware tier (4GB, 6GB, 8GB RAM).
+- **Secure Authentication**: Google OAuth integrated via the Go Goth library.
 
 ---
 
-## 🚀 Getting Started
+## 3. Installation and Setup
 
 ### Prerequisites
+The following software must be installed on the host system:
+- **Node.js** (Version 18 or higher)
+- **Go** (Version 1.20 or higher)
+- **Android SDK Platform Tools** (with `adb` executable added to the system PATH)
+- **SQLite 3**
 
-Make sure you have the following installed on your machine:
-- **Node.js** (v18 or higher)
-- **Go** (v1.20 or higher)
-- **Android SDK Platform Tools** (with `adb` set up in your system PATH)
-- **SQLite**
+### Step-by-Step Configuration
 
----
-
-### Setup Guide
-
-#### 1. Configure Environment Variables
-Create a `.env` file in the root folder of the project (and also inside the `frontend/` directory):
+#### Step 1: Environment Variables Setup
+Create a `.env` file in the root directory (and also copy it into the `frontend/` directory). This file is configured in `.gitignore` and will not be pushed to Git:
 ```env
 GOOGLE_CLIENT_ID="your-google-oauth-client-id"
 GOOGLE_CLIENT_SECRET="your-google-oauth-client-secret"
 ```
 
-#### 2. Run Go Gateway & Billing Server
-Navigate to the `frontend` folder, install Go dependencies, and run:
+#### Step 2: Go Gateway Setup
+Navigate to the `frontend/` directory, install Go dependencies, and run the backend gateway:
 ```bash
 cd frontend
 go mod tidy
 go run .
-# Or build the binary
-go build -o webapp
-./webapp
 ```
-*The Go server runs on **`http://localhost:8080`***.
+The Go backend services will be available at `http://localhost:8080`.
 
-#### 3. Run Node.js & Next.js Server
-From the project root folder, install npm dependencies and run the development server:
+#### Step 3: Next.js and Node.js Server Setup
+From the project root directory, install npm dependencies and run the Next.js/Node.js development server:
 ```bash
 npm install
 npm run dev
 ```
-*The Next.js client runs on **`http://localhost:3000`** and the ADB stream socket server on **`http://localhost:8000`***.
+- The Next.js frontend client will run on `http://localhost:3000`.
+- The Node.js WebSocket ADB proxy will run on `http://localhost:8000`.
 
 ---
 
-## 🎁 Redemption Code API Reference
+## 4. API Reference
 
-### 1. Generate a Voucher Code
+### Voucher Generation API
 - **Endpoint**: `POST /api/redemption/generate`
-- **Request Body**:
+- **Content-Type**: `application/json`
+- **Parameters**:
+  | Parameter | Type | Required | Description |
+  | :--- | :--- | :--- | :--- |
+  | `tier` | String | Yes | Hardware tier: `ram4gb`, `ram6gb`, `ram8gb` |
+  | `duration` | String | Yes | Session duration: `7h`, `24h`, `7d`, `30d` |
+  | `type` | String | Yes | Code category: `new` (create new device) or `extend` (renew) |
+
+- **Request Example**:
   ```json
   {
     "tier": "ram4gb",
@@ -100,19 +96,41 @@ npm run dev
     "type": "new"
   }
   ```
-  *(Options for tier: `ram4gb`, `ram6gb`, `ram8gb`. Options for duration: `7h`, `24h`, `7d`)*
+- **Response Example**:
+  ```json
+  {
+    "success": true,
+    "code": "A1B2C3D4E5F6G7H8",
+    "tier": "ram4gb",
+    "duration": "7h",
+    "type": "new",
+    "expires": "2025-01-20T10:30:00Z"
+  }
+  ```
 
-### 2. Redeem Code for New Device
+### Voucher Redemption API (New Device)
 - **Endpoint**: `POST /api/redemption/redeem/new`
+- **Content-Type**: `application/json`
 - **Request Body**:
   ```json
   {
     "code": "YOUR_REDEMPTION_CODE"
   }
   ```
+- **Response Example**:
+  ```json
+  {
+    "success": true,
+    "message": "Kode penukaran berhasil! Ponsel Cloud baru telah ditambahkan",
+    "device": "DEVICE-UDID",
+    "streamUrl": "http://127.0.0.1:8000/?token=TOKEN",
+    "expiresAt": "2025-12-21T15:00:00Z"
+  }
+  ```
 
-### 3. Redeem Code to Extend Device Subscription
+### Voucher Extension API (Extend Device Subscription)
 - **Endpoint**: `POST /api/redemption/redeem/extend`
+- **Content-Type**: `application/json`
 - **Request Body**:
   ```json
   {
@@ -123,13 +141,13 @@ npm run dev
 
 ---
 
-## 🛡️ Git & Security Warning
+## 5. Deployment and Security Standards
 
-1. **Never commit `.env` files** or SQLite `.db` databases. These are ignored by `.gitignore`.
-2. Do not commit build outputs or binaries like `.exe` or `webapp-linux`.
-3. If GitHub Push Protection blocks your commit, make sure you did not hardcode credentials in `frontend/main.go`.
+1. **Credentials Management**: Hardcoded API keys, database secrets, or Google OAuth keys must never be committed to Git. Always load secrets via `os.Getenv` or `process.env`.
+2. **Ignored Patterns**: Ensure binary files (`.exe`, `.apk`, target build directories) and SQLite database files (`*.db`, `*.sqlite`) are listed in `.gitignore`.
+3. **Database Security**: Keep the SQLite production database protected and verify write/read permissions on the server hosting `webapp.db`.
 
 ---
 
-## 📄 License
-This project is private and proprietary.
+## 6. License
+This software and documentation are proprietary and confidential. Unauthorized distribution is prohibited.

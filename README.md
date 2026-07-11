@@ -151,3 +151,8 @@ npm run dev
 
 ## 6. License
 This software and documentation are proprietary and confidential. Unauthorized distribution is prohibited.
+
+---
+
+## 7. Credits
+Developed and maintained by **SHIELDTEAM**.

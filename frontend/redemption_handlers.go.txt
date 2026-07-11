@@ -1,0 +1,196 @@
+// Add these functions to main.go
+
+// Redemption Code Model
+type RedemptionCode struct {
+	ID        uint      `gorm:"primaryKey" json:"id"`
+	Code      string    `gorm:"unique;not null" json:"code"`
+	Plan      string    `json:"plan"`      // "7 Days", "30 Days", etc
+	Tier      string    `json:"tier"`      // "VIP", "SVIP", etc
+	Days      int       `json:"days"`      // Duration in days
+	MaxUses   int       `json:"max_uses"`  // Maximum redemptions
+	Uses      int       `json:"uses"`      // Current redemption count
+	CreatedAt time.Time `json:"created_at"`
+}
+
+// Generate Redemption Code
+func handleGenerateRedemptionCode(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req struct {
+		Code     string `json:"code"`
+		Plan     string `json:"plan"`
+		Tier     string `json:"tier"`
+		Days     int    `json:"days"`
+		MaxUses  int    `json:"max_uses"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	// Validate input
+	if req.Code == "" || req.Plan == "" || req.Tier == "" || req.Days <= 0 || req.MaxUses <= 0 {
+		http.Error(w, "Missing required fields", http.StatusBadRequest)
+		return
+	}
+
+	// Create redemption code
+	redemptionCode := RedemptionCode{
+		Code:    strings.ToUpper(req.Code),
+		Plan:    req.Plan,
+		Tier:    req.Tier,
+		Days:    req.Days,
+		MaxUses: req.MaxUses,
+		Uses:    0,
+	}
+
+	if err := db.Create(&redemptionCode).Error; err != nil {
+		http.Error(w, "Failed to create redemption code: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("✅ Created redemption code: %s (%s, %s, %d days, max %d uses)",
+		redemptionCode.Code, redemptionCode.Plan, redemptionCode.Tier, redemptionCode.Days, redemptionCode.MaxUses)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"success": true,
+		"code":    redemptionCode,
+		"message": "Redemption code created successfully",
+	})
+}
+
+// Redeem Code for New Subscription
+func handleRedeemCodeNew(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Get user from session
+	session, _ := store.Get(r, "session-name")
+	userID, ok := session.Values["user_id"].(uint)
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	var req struct {
+		Code   string `json:"code"`
+		Server string `json:"server"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	// Find and validate redemption code
+	var redemptionCode RedemptionCode
+	if err := db.Where("code = ?", strings.ToUpper(req.Code)).First(&redemptionCode).Error; err != nil {
+		http.Error(w, "Invalid redemption code", http.StatusNotFound)
+		return
+	}
+
+	// Check if code is still valid
+	if redemptionCode.Uses >= redemptionCode.MaxUses {
+		http.Error(w, "Redemption code has reached maximum uses", http.StatusBadRequest)
+		return
+	}
+
+	// Create subscription
+	expiresAt := time.Now().AddDate(0, 0, redemptionCode.Days)
+	subscription := Subscription{
+		UserID:    userID,
+		Plan:      redemptionCode.Plan,
+		Tier:      redemptionCode.Tier,
+		Server:    req.Server,
+		ExpiresAt: expiresAt,
+		Active:    true,
+		WsLink:    fmt.Sprintf("https://example.com/device?token=%s", generateNumericID()),
+	}
+
+	if err := db.Create(&subscription).Error; err != nil {
+		http.Error(w, "Failed to create subscription", http.StatusInternalServerError)
+		return
+	}
+
+	// Increment redemption uses
+	db.Model(&redemptionCode).Update("uses", redemptionCode.Uses+1)
+
+	log.Printf("✅ User %d redeemed code %s for new %s subscription", userID, redemptionCode.Code, redemptionCode.Plan)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"success":      true,
+		"subscription": subscription,
+		"message":      fmt.Sprintf("Successfully redeemed %s subscription", redemptionCode.Plan),
+	})
+}
+
+// Redeem Code to Extend Existing Subscription
+func handleRedeemCodeExtend(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Get user from session
+	session, _ := store.Get(r, "session-name")
+	userID, ok := session.Values["user_id"].(uint)
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	var req struct {
+		Code           string `json:"code"`
+		SubscriptionID uint   `json:"subscription_id"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	// Find and validate redemption code
+	var redemptionCode RedemptionCode
+	if err := db.Where("code = ?", strings.ToUpper(req.Code)).First(&redemptionCode).Error; err != nil {
+		http.Error(w, "Invalid redemption code", http.StatusNotFound)
+		return
+	}
+
+	// Check if code is still valid
+	if redemptionCode.Uses >= redemptionCode.MaxUses {
+		http.Error(w, "Redemption code has reached maximum uses", http.StatusBadRequest)
+		return
+	}
+
+	// Find subscription
+	var subscription Subscription
+	if err := db.Where("id = ? AND user_id = ?", req.SubscriptionID, userID).First(&subscription).Error; err != nil {
+		http.Error(w, "Subscription not found", http.StatusNotFound)
+		return
+	}
+
+	// Extend expiration
+	newExpiry := subscription.ExpiresAt.AddDate(0, 0, redemptionCode.Days)
+	db.Model(&subscription).Update("expires_at", newExpiry)
+
+	// Increment redemption uses
+	db.Model(&redemptionCode).Update("uses", redemptionCode.Uses+1)
+
+	log.Printf("✅ User %d extended subscription %d with code %s (+%d days)",
+		userID, subscription.ID, redemptionCode.Code, redemptionCode.Days)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"success":    true,
+		"new_expiry": newExpiry,
+		"message":    fmt.Sprintf("Successfully extended subscription by %d days", redemptionCode.Days),
+	})
+}

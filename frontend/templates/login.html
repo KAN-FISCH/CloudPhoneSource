@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - NSPhone</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body class="auth-body">
+    <div class="auth-container">
+        <div class="auth-left">
+            <div class="auth-header">
+                <a href="/" class="back-link">← Back to Home</a>
+                <div class="logo">
+                    <img src="/static/assets/images/logo.png" alt="NSPhone Logo"
+                        style="height: 32px; border-radius: 6px;">
+                    <span style="margin-left: 10px;">NSPhone</span>
+                </div>
+            </div>
+
+            <div class="auth-form-container" id="login-form">
+                <h2>Welcome Back</h2>
+
+                <p class="auth-subtitle" style="margin-bottom: 2rem;">Sign in to access your cloud emulator.</p>
+
+                <div class="terms-checkbox-container"
+                    style="margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px;">
+                    <input type="checkbox" id="terms-check"
+                        style="accent-color: var(--accent-primary); width: 18px; height: 18px; cursor: pointer;">
+                    <label for="terms-check"
+                        style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.4; cursor: pointer;">
+                        I agree to the <a href="#" onclick="openPolicyModal('terms'); return false;"
+                            style="color: var(--text-primary); text-decoration: underline;">Terms of Service</a> and <a
+                            href="#" onclick="openPolicyModal('privacy'); return false;"
+                            style="color: var(--text-primary); text-decoration: underline;">Privacy Policy</a>.
+                    </label>
+                </div>
+
+                <div class="social-login-grid" style="display: flex; flex-direction: column; gap: 12px;">
+                    <!-- Google Logic -->
+                    <a href="/auth/google" id="google-login-btn"
+                        class="btn btn-secondary btn-block social-btn disabled-btn"
+                        style="text-decoration:none; display:flex; justify-content:center; align-items:center; height: 50px; font-weight: 500; color: #fff; background-color: #2c2c2e; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;">
+                        <svg class="google-icon" style="margin-right: 12px;" width="20" height="20" viewBox="0 0 24 24"
+                            fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M23.52 12.29C23.52 11.43 23.44 10.74 23.3 10H12V14.51H18.47C18.18 15.99 17.34 17.25 16.08 18.1L19.95 21.1C22.2 19.01 23.52 15.92 23.52 12.29Z"
+                                fill="#4285F4" />
+                            <path
+                                d="M12 24C15.24 24 17.96 22.92 19.95 21.1L16.08 18.1C15 18.82 13.62 19.24 12 19.24C8.87 19.24 6.22 17.12 5.27 14.29L1.26 17.38C3.26 21.34 7.37 24 12 24Z"
+                                fill="#34A853" />
+                            <path
+                                d="M5.27 14.29C5 13.5 4.86 12.67 4.86 11.82C4.86 10.96 5 10.14 5.27 9.35L1.26 6.25C0.46 7.84 0 9.77 0 11.82C0 14.15 0.53 16.33 1.37 18.23L5.27 14.29Z"
+                                fill="#FBBC05" />
+                            <path
+                                d="M12 4.75C13.77 4.75 15.35 5.36 16.6 6.55L20.02 3.13C17.96 1.21 15.24 0 12 0C7.37 0 3.26 2.66 1.26 6.62L5.27 9.71C6.22 7.02 8.87 4.75 12 4.75Z"
+                                fill="#EA4335" />
+                        </svg>
+                        Continue with Google
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="auth-right">
+            <div class="auth-visual">
+                <div class="glow-sphere sphere-3"></div>
+                <div class="showcase-content">
+                    <h3>Run Android Anywhere</h3>
+                    <p>Access your virtual devices from any browser with zero latency.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Policy Modal -->
+    <div id="policy-modal" class="modal-overlay hidden">
+        <div class="modal-content policy-modal">
+            <div class="modal-header">
+                <h3 id="policy-title">Terms of Service</h3>
+                <button class="close-modal" onclick="closePolicyModal()">×</button>
+            </div>
+            <div class="modal-body scrollable-body">
+                <div id="terms-content" class="policy-text">
+                    <h4>1. Introduction</h4>
+                    <p>Welcome to NSPhone ("we," "our," or "us"). By accessing or using our cloud emulator services, you
+                        agree to be bound by these Terms of Service.</p>
+
+                    <h4>2. Service Usage</h4>
+                    <p>You agree to use our services only for lawful purposes. You are prohibited from using the
+                        allocated cloud devices for mining cryptocurrencies, illegal activities, or disrupting other
+                        users.</p>
+
+                    <h4>3. Account Security</h4>
+                    <p>You are responsible for maintaining the confidentiality of your account credentials. Any activity
+                        that occurs under your account is your responsibility.</p>
+
+                    <h4>4. Refunds & Cancellation</h4>
+                    <p>All purchases are final. Refunds are only processed in cases of prolonged service outage or
+                        technical failure on our end.</p>
+
+                    <h4>5. Termination</h4>
+                    <p>We reserve the right to suspend or terminate your account if you violate these terms or engage in
+                        abusive behavior.</p>
+                </div>
+
+                <div id="privacy-content" class="policy-text hidden">
+                    <h4>1. Data Collection</h4>
+                    <p>We collect minimal data necessary to provide our services, including your email address (for
+                        login) and device usage logs.</p>
+
+                    <h4>2. Usage of Information</h4>
+                    <p>Your data is used solely to manage your account, improve service performance, and ensure
+                        security. We do not sell your personal data to third parties.</p>
+
+                    <h4>3. Data Security</h4>
+                    <p>We implement industry-standard security measures to protect your data. However, no method of
+                        transmission over the internet is 100% secure.</p>
+
+                    <h4>4. Cookies</h4>
+                    <p>We use cookies to maintain your session and preferences. You can control cookie settings in your
+                        browser.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="policy-switch">
+                    <button id="btn-terms" class="btn btn-secondary active"
+                        onclick="switchPolicyTab('terms')">Terms</button>
+                    <button id="btn-privacy" class="btn btn-secondary"
+                        onclick="switchPolicyTab('privacy')">Privacy</button>
+                </div>
+                <button class="btn btn-primary" onclick="closePolicyModal()">I Understand</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+            display: none;
+            /* simple hide */
+        }
+
+        .policy-modal {
+            background: #1a1a1c;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        .policy-text h4 {
+            color: #fff;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        .policy-text.hidden {
+            display: none;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .policy-switch {
+            display: flex;
+            gap: 10px;
+        }
+
+        .policy-switch .btn.active {
+            background: #fff;
+            color: #000;
+        }
+    </style>
+
+    <script>
+        function openPolicyModal(tab) {
+            const modal = document.getElementById('policy-modal');
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+            switchPolicyTab(tab);
+        }
+
+        function closePolicyModal() {
+            const modal = document.getElementById('policy-modal');
+            modal.classList.add('hidden');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        function switchPolicyTab(tab) {
+            const title = document.getElementById('policy-title');
+            const termsContent = document.getElementById('terms-content');
+            const privacyContent = document.getElementById('privacy-content');
+            const btnTerms = document.getElementById('btn-terms');
+            const btnPrivacy = document.getElementById('btn-privacy');
+
+            if (tab === 'terms') {
+                title.innerText = 'Terms of Service';
+                termsContent.classList.remove('hidden');
+                privacyContent.classList.add('hidden');
+                btnTerms.classList.add('active');
+                btnPrivacy.classList.remove('active');
+            } else {
+                title.innerText = 'Privacy Policy';
+                termsContent.classList.add('hidden');
+                privacyContent.classList.remove('hidden');
+                btnTerms.classList.remove('active');
+                btnPrivacy.classList.add('active');
+            }
+        }
+
+        // Checkbox Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkbox = document.getElementById('terms-check');
+            const loginBtn = document.getElementById('google-login-btn');
+
+            function toggleLoginBtn() {
+                if (checkbox.checked) {
+                    loginBtn.style.pointerEvents = "auto";
+                    loginBtn.style.opacity = "1";
+                    loginBtn.style.borderColor = "var(--border-color)";
+                    loginBtn.onclick = null; // Remove any prevention
+                } else {
+                    loginBtn.style.pointerEvents = "none";
+                    loginBtn.style.opacity = "0.5";
+                    loginBtn.onclick = (e) => e.preventDefault();
+                }
+            }
+
+            // Initial state
+            toggleLoginBtn();
+
+            checkbox.addEventListener('change', toggleLoginBtn);
+        });
+    </script>
+
+    <script src="/static/js/script.js"></script>
+</body>
+
+</html>

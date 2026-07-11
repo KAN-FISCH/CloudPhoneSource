@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skema Template Web</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --background: #0f172a;
+            --surface: rgba(30, 41, 59, 0.7);
+            --border: rgba(255, 255, 255, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 30px 20px;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.1) 0px, transparent 50%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 280px 1fr 280px;
+            grid-template-rows: auto auto 1fr auto;
+            gap: 16px;
+            min-height: calc(100vh - 60px);
+        }
+
+        .header-web {
+            grid-column: 1 / -1;
+            background: var(--surface);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        .navigator-web {
+            grid-column: 1 / -1;
+            background: var(--surface);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .menu-kiri-col, .menu-kanan-col {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .menu-header {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .box-item {
+            flex: 1;
+            background: var(--surface);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            min-height: 180px;
+            transition: all 0.2s ease;
+        }
+
+        .box-item:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .isi-web-col {
+            display: flex;
+        }
+
+        .box-isi {
+            flex: 1;
+            background: var(--surface);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            text-transform: uppercase;
+            min-height: 380px;
+            transition: all 0.2s ease;
+        }
+
+        .box-isi:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .footer-web {
+            grid-column: 1 / -1;
+            background: var(--surface);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 992px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+            .header-web, .navigator-web, .footer-web {
+                grid-column: span 1;
+            }
+            .box-item, .box-isi {
+                min-height: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <header class="header-web">
+            Header Web
+        </header>
+
+        <nav class="navigator-web">
+            Navigator Web
+        </nav>
+
+        <aside class="menu-kiri-col">
+            <div class="menu-header">Menu Kiri</div>
+            <div class="box-item">Layar User</div>
+            <div class="box-item">Info Client</div>
+        </aside>
+
+        <main class="isi-web-col">
+            <div class="box-isi">Isi Web</div>
+        </main>
+
+        <aside class="menu-kanan-col">
+            <div class="menu-header">Menu Kanan</div>
+            <div class="box-item">RSS Berita IT</div>
+            <div class="box-item">Kutipan-Kutipan Terkenal</div>
+        </aside>
+
+        <footer class="footer-web">
+            Footer Web
+        </footer>
+
+    </div>
+
+</body>
+</html>

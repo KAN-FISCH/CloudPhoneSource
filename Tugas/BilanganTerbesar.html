@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mencari Bilangan Terbesar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --background: #0f172a;
+            --surface: rgba(30, 41, 59, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%);
+        }
+
+        .card {
+            background: var(--surface);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            text-align: center;
+            background: linear-gradient(to right, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .input-control {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--text-main);
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        .input-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(to right, #6366f1, #4f46e5);
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 15px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: #10b981;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Cari Bilangan Terbesar</h1>
+        <form id="compareForm" onsubmit="findLargest(event)">
+            <div class="form-group">
+                <label for="bil1">Bilangan Pertama</label>
+                <input type="number" id="bil1" required class="input-control">
+            </div>
+            <div class="form-group">
+                <label for="bil2">Bilangan Kedua</label>
+                <input type="number" id="bil2" required class="input-control">
+            </div>
+            <div class="form-group">
+                <label for="bil3">Bilangan Ketiga</label>
+                <input type="number" id="bil3" required class="input-control">
+            </div>
+            <button type="submit" class="btn-submit">Cari Terbesar</button>
+        </form>
+
+        <div id="resultBox" class="result"></div>
+    </div>
+
+    <script>
+        function findLargest(event) {
+            event.preventDefault();
+            const bil1 = parseInt(document.getElementById('bil1').value);
+            const bil2 = parseInt(document.getElementById('bil2').value);
+            const bil3 = parseInt(document.getElementById('bil3').value);
+            let terbesar;
+
+            if (bil1 > bil2 && bil1 > bil3) {
+                terbesar = bil1;
+            } else if (bil2 > bil1 && bil2 > bil3) {
+                terbesar = bil2;
+            } else {
+                terbesar = bil3;
+            }
+
+            const resultBox = document.getElementById('resultBox');
+            resultBox.innerText = "Bilangan Terbesar: " + terbesar;
+            resultBox.style.display = "block";
+        }
+    </script>
+</body>
+</html>

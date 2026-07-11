@@ -1,0 +1,3171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Dashboard - NSPhone (Live)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <!-- PAKASIR Checkout JS (Loaded dynamically or using Redirect) -->
+    <!-- <script src="https://sandbox.doku.com/jokul-checkout-js/v1/jokul-checkout-1.0.0.js"></script> -->
+
+    <!-- Screenshot Auto-Refresh (2s) -->
+    <script src="/static/js/screenshot-refresh.js" defer></script>
+
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar (Desktop) -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span>NSPhone</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-target="view-home">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                    </svg>
+                    My Devices
+                </a>
+
+                <!-- Store Button (Reset & Cleaned) -->
+                <a href="#" class="nav-item" id="btn-store-sidebar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                    Store / Add
+                </a>
+
+                <!-- <a href="#" class="nav-item" data-target="view-tools">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                        </path>
+                    </svg>
+                    Tools
+                </a> -->
+                <!-- <a href="#" class="nav-item" data-target="view-discover">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    Discover
+                </a> -->
+                <a href="#" class="nav-item" data-target="view-profile">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Profile (Me)
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">PL</div>
+                    <div class="user-details">
+                        <span class="username" id="sidebar-username">{{.Name}}</span>
+                        <span class="user-plan">ID: {{.NumericID}}</span>
+                    </div>
+                </div>
+                <a href="/logout" class="logout-btn" style="color:white; border:none; background:none; cursor:pointer;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- VIEW: HOME (My Devices) -->
+            <div id="view-home" class="view-section active">
+                <header class="top-bar">
+                    <div class="header-left">
+                        <h2 class="page-title">My Cloud Phones</h2>
+                        <span class="device-count">{{.ActiveCount}} Active</span>
+                    </div>
+                    <div class="header-actions">
+                        <button class="icon-btn refresh-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M23 4v6h-6"></path>
+                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                            </svg></button>
+                        <button class="btn btn-primary btn-sm" id="add-device-trigger">+ New</button>
+                    </div>
+                </header>
+
+                <div class="devices-grid">
+                    {{range .Subscriptions}}
+                    <div class="device-card active-device device-preview-card" data-udid="{{.DeviceUDID}}"
+                        data-token="{{.Token}}" data-stream-url="{{.DynamicStreamURL}}"
+                        onclick="window.location.href = this.dataset.streamUrl">
+                        <div class="device-status online"></div>
+                        <img class="device-screenshot-bg" src="{{.ScreenshotURL}}" alt="Device Preview">
+                        <div class="device-info">
+                            <h3>{{.DeviceUDID}}</h3>
+                            <span class="device-expiry-countdown" data-expires="{{.ExpiresAt.Unix}}">Expires:
+                                Loading...</span>
+                        </div>
+                        <div class="play-overlay">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="white">
+                                <circle cx="12" cy="12" r="11" fill="rgba(0,0,0,0.5)" />
+                                <polygon points="10,8 17,12 10,16" fill="white" />
+                            </svg>
+                        </div>
+                    </div>
+                    {{end}}
+
+                    <!-- Buy Card -->
+                    <div class="device-card buy-card" id="add-device-card-btn">
+                        <div class="buy-content">
+                            <div class="plus-circle">+</div>
+                            <span>Purchase Cloud Phone</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: TOOLS -->
+            <div id="view-tools" class="view-section hidden">
+                <header class="top-bar">
+                    <h2 class="page-title">Tools</h2>
+                </header>
+                <div class="tools-container">
+                    <div class="tools-list">
+                        <!-- Tool Item -->
+                        <div class="tool-item">
+                            <div class="tool-icon" style="background: rgba(236, 64, 122, 0.1); color: #ec407a;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </div>
+                            <span class="tool-name">Tingkatkan (Upgrade)</span>
+                            <span class="arrow-right">›</span>
+                        </div>
+                        <div class="tool-item">
+                            <div class="tool-icon" style="background: rgba(41, 121, 255, 0.1); color: #2979ff;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M12 20h9"></path>
+                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                                </svg>
+                            </div>
+                            <span class="tool-name">Kustomisasi</span>
+                            <span class="arrow-right">›</span>
+                        </div>
+                        <div class="tool-item">
+                            <div class="tool-icon" style="background: rgba(255, 215, 64, 0.1); color: #ffab00;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="23 4 23 10 17 10"></polyline>
+                                    <polyline points="1 20 1 14 7 14"></polyline>
+                                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span class="tool-name">Mulai ulang dalam batch</span>
+                            <span class="arrow-right">›</span>
+                        </div>
+                        <div class="tool-item">
+                            <div class="tool-icon" style="background: rgba(0, 176, 255, 0.1); color: #00b0ff;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path
+                                        d="M2.5 2v6h6M21.5 22v-6h-6M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span class="tool-name">Reset dalam batch</span>
+                            <span class="arrow-right">›</span>
+                        </div>
+                        <div class="tool-item">
+                            <div class="tool-icon" style="background: rgba(0, 230, 118, 0.1); color: #00e676;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                                    <rect x="9" y="9" width="6" height="6"></rect>
+                                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                                    <line x1="9" y1="20" x2="9" y2="23"></line>
+                                    <line x1="15" y1="20" x2="15" y2="23"></line>
+                                    <line x1="20" y1="9" x2="23" y2="9"></line>
+                                    <line x1="20" y1="14" x2="23" y2="14"></line>
+                                    <line x1="1" y1="9" x2="4" y2="9"></line>
+                                    <line x1="1" y1="14" x2="4" y2="14"></line>
+                                </svg>
+                            </div>
+                            <span class="tool-name">Root</span>
+                            <div class="toggle-switch active"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: DISCOVER (TikToks) -->
+            <div id="view-discover" class="view-section hidden">
+                <header class="top-bar">
+                    <h2 class="page-title">Discover</h2>
+                </header>
+                <div class="discover-container"
+                    style="padding: 10px; overflow-y: auto; height: calc(100vh - 120px); -webkit-overflow-scrolling: touch;">
+                    <div class="tiktok-grid">
+                        <blockquote class="tiktok-embed"
+                            cite="https://www.tiktok.com/@shinchan.senpai/video/7582966968244849938"
+                            data-video-id="7582966968244849938">
+                            <section> <a target="_blank"
+                                    href="https://www.tiktok.com/@shinchan.senpai/video/7582966968244849938">@shinchan.senpai</a>
+                            </section>
+                        </blockquote>
+                        <blockquote class="tiktok-embed"
+                            cite="https://www.tiktok.com/@shinchan.senpai/video/7579100273218505991"
+                            data-video-id="7579100273218505991">
+                            <section> <a target="_blank"
+                                    href="https://www.tiktok.com/@shinchan.senpai/video/7579100273218505991">@shinchan.senpai</a>
+                            </section>
+                        </blockquote>
+                        <blockquote class="tiktok-embed"
+                            cite="https://www.tiktok.com/@shinchan.senpai/video/7572458228131351815"
+                            data-video-id="7572458228131351815">
+                            <section> <a target="_blank"
+                                    href="https://www.tiktok.com/@shinchan.senpai/video/7572458228131351815">@shinchan.senpai</a>
+                            </section>
+                        </blockquote>
+                        <blockquote class="tiktok-embed"
+                            cite="https://www.tiktok.com/@shinchan.senpai/video/7557212980497108235"
+                            data-video-id="7557212980497108235">
+                            <section> <a target="_blank"
+                                    href="https://www.tiktok.com/@shinchan.senpai/video/7557212980497108235">@shinchan.senpai</a>
+                            </section>
+                        </blockquote>
+                        <blockquote class="tiktok-embed"
+                            cite="https://www.tiktok.com/@shinchan.senpai/video/7560225708757241100"
+                            data-video-id="7560225708757241100">
+                            <section> <a target="_blank"
+                                    href="https://www.tiktok.com/@shinchan.senpai/video/7560225708757241100">@shinchan.senpai</a>
+                            </section>
+                        </blockquote>
+                        <blockquote class="tiktok-embed"
+                            cite="https://www.tiktok.com/@shinchan.senpai/video/7546135602454859013"
+                            data-video-id="7546135602454859013">
+                            <section> <a target="_blank"
+                                    href="https://www.tiktok.com/@shinchan.senpai/video/7546135602454859013">@shinchan.senpai</a>
+                            </section>
+                        </blockquote>
+                    </div>
+                    <script async src="https://www.tiktok.com/embed.js"></script>
+                </div>
+                <style>
+                    .tiktok-grid {
+                        display: grid;
+                        grid-template-columns: repeat(2, 1fr);
+                        /* iOS Gallery Style (2 columns) */
+                        gap: 12px;
+                        padding-bottom: 80px;
+                    }
+
+                    .tiktok-embed {
+                        margin: 0 !important;
+                        border-radius: 12px !important;
+                        overflow: hidden !important;
+                        box-shadow: none !important;
+                        border: none !important;
+                        background: transparent !important;
+                        /* Fix white background issue */
+                        padding: 0 !important;
+                        min-width: unset !important;
+                        max-width: unset !important;
+                    }
+
+                    /* Hide extra TikTok footer junk to make it cleaner */
+                    .tiktok-embed iframe {
+                        border-radius: 12px !important;
+                        height: 550px !important;
+                        /* Force tall aspect ratio */
+                        background: transparent !important;
+                    }
+
+                    /* Mobile Optimization */
+                    @media (max-width: 768px) {
+                        .discover-container {
+                            padding: 8px !important;
+                        }
+
+                        .tiktok-grid {
+                            gap: 16px;
+                            grid-template-columns: 1fr !important;
+                            /* Single Column for Mobile */
+                        }
+
+                        .tiktok-embed iframe {
+                            height: 520px !important;
+                            /* Slightly taller for full screen feel */
+                        }
+                    }
+                </style>
+            </div>
+
+            <!-- VIEW: PROFILE (Me) -->
+            <div id="view-profile" class="view-section hidden">
+                <div class="profile-header">
+                    <div class="profile-user-card">
+                        <div class="p-avatar">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div class="p-info">
+                            <h3 id="profile-name">{{.Name}}</h3>
+                            <span class="p-id" id="profile-id">ID: {{.NumericID}}</span>
+                        </div>
+                        <button class="check-in-btn">Check-in</button>
+                    </div>
+
+
+                </div>
+
+                <div class="profile-menu-list">
+                    <a href="#" class="menu-item">
+                        <div class="menu-icon" style="color: #42a5f5;"><svg width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                </path>
+                            </svg></div>
+                        <span class="menu-text">Manajemen otorisasi</span>
+                    </a>
+                    <a href="#" class="menu-item" data-target="view-redeem-home">
+                        <div class="menu-icon" style="color: #42a5f5;"><svg width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4">
+                                </path>
+                            </svg></div>
+                        <span class="menu-text">Kode penukaran prabayar</span>
+                    </a>
+                    <a href="#" class="menu-item" data-target="view-subscription">
+                        <div class="menu-icon" style="color: #42a5f5;"><svg width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg></div>
+                        <span class="menu-text">Manajemen Langganan</span>
+                    </a>
+                    <a href="#" class="menu-item" data-target="view-settings">
+                        <div class="menu-icon" style="color: #42a5f5;"><svg width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path
+                                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                                </path>
+                            </svg></div>
+                        <span class="menu-text">Pengaturan</span>
+                    </a>
+                    <a href="#" class="menu-item" data-target="view-network">
+                        <div class="menu-icon" style="color: #42a5f5;"><svg width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                                <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                                <line x1="12" y1="20" x2="12.01" y2="20"></line>
+                            </svg></div>
+                        <span class="menu-text">Deteksi Jaringan</span>
+                    </a>
+                    <a href="/logout" class="menu-item">
+                        <div class="menu-icon" style="color: #42a5f5;"><svg width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                            </svg></div>
+                        <span class="menu-text">Ganti akun</span>
+                    </a>
+                    <a href="#" class="menu-item" data-target="view-history">
+                        <div class="menu-icon" style="color: #42a5f5;"><svg width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg></div>
+                        <span class="menu-text">Invoice / History</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- VIEW: REDEEM HOME -->
+            <div id="view-redeem-home" class="view-section hidden">
+                <header class="top-bar">
+                    <div class="header-left">
+                        <button class="icon-btn back-btn" data-target="view-profile">←</button>
+                        <h2 class="page-title">Kode Penukaran</h2>
+                    </div>
+                </header>
+                <div class="redeem-container">
+                    <div class="redeem-card blue-gradient" data-target="view-redeem-new">
+                        <h3>Ponsel Cloud baru</h3>
+                        <div class="card-decor"></div>
+                    </div>
+                    <div class="redeem-card light-blue-gradient" data-target="view-redeem-extend">
+                        <h3>Perpanjang ponsel Cloud</h3>
+                        <div class="card-decor"></div>
+                    </div>
+                    <div class="redeem-card dark-gradient">
+                        <h3>Gunakan alat kustomisasi</h3>
+                        <div class="card-decor"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: REDEEM NEW PHONE -->
+            <div id="view-redeem-new" class="view-section hidden">
+                <header class="top-bar">
+                    <div class="header-left">
+                        <button class="icon-btn back-btn" data-target="view-redeem-home">←</button>
+                        <h2 class="page-title">Ponsel Cloud Baru</h2>
+                    </div>
+                </header>
+                <div class="form-container">
+                    <input id="redeem-code-new" type="text" placeholder="Silakan masukkan kode penukaran prabayar"
+                        class="linear-input lg-input">
+                    <button id="btn-redeem-new" class="btn btn-primary btn-block btn-lg mt-4"
+                        onclick="redeemCodeForNew()">Tukar</button>
+
+                    <div class="instructions">
+                        <h4>Petunjuk Penggunaan:</h4>
+                        <ol>
+                            <li>Kode penukaran dapat digunakan untuk membeli atau memperpanjang ponsel Cloud</li>
+                            <li>Setiap kode penukaran hanya dapat digunakan satu kali</li>
+                            <li>shield memiliki hak akhir untuk menafsirkan penggunaan kode penukaran</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: REDEEM EXTEND PHONE -->
+            <div id="view-redeem-extend" class="view-section hidden">
+                <header class="top-bar">
+                    <div class="header-left">
+                        <button class="icon-btn back-btn" data-target="view-redeem-home">←</button>
+                        <h2 class="page-title">Perpanjang Ponsel</h2>
+                    </div>
+                </header>
+                <div class="form-container">
+                    <!-- Dropdown changed to Input as requested -->
+                    <input id="extend-device-udid" type="text" placeholder="Masukkan ID Ponsel Cloud (Contoh: NERO)"
+                        class="linear-input lg-input" style="margin-bottom: 16px;">
+
+                    <input id="redeem-code-extend" type="text" placeholder="Silakan masukkan kode penukaran"
+                        class="linear-input lg-input">
+                    <button id="btn-redeem-extend" class="btn btn-primary btn-block btn-lg mt-4"
+                        onclick="redeemCodeForExtend()">Perpanjang</button>
+
+                    <div class="instructions">
+                        <h4>Petunjuk Penggunaan:</h4>
+                        <ol>
+                            <li>Kode penukaran dapat digunakan untuk membeli atau memperpanjang ponsel Cloud</li>
+                            <li>Setiap kode penukaran hanya dapat digunakan satu kali</li>
+                            <li>shield memiliki hak akhir untuk menafsirkan penggunaan kode penukaran</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: HISTORY -->
+            <div id="view-history" class="view-section hidden">
+                <header class="top-bar">
+                    <div class="header-left">
+                        <button class="icon-btn back-btn" data-target="view-profile">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="19" y1="12" x2="5" y2="12"></line>
+                                <polyline points="12 19 5 12 12 5"></polyline>
+                            </svg>
+                        </button>
+                        <h2 class="page-title">Riwayat Pembayaran</h2>
+                    </div>
+                </header>
+                <div class="tools-container">
+                    <div class="ios-list-group">
+                        {{range .Transactions}}
+                        <div class="ios-item {{if eq .Status " success"}}transaction-claimable{{end}}" {{if eq
+                            .Status "success" }}onclick="openClaimModal('{{.OrderID}}', '{{.Plan}}')" {{end}}>
+                            <div class="ios-left">
+                                <div class="ios-icon {{.IconClass}}">
+                                    {{.IconText}}
+                                </div>
+                                <div class="ios-info">
+                                    <div class="ios-title">{{.Plan}}</div>
+                                    <div class="ios-subtitle">{{.CreatedAt.Format "02 Jan, 15:04"}} • #{{.OrderID}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ios-right">
+                                <div class="ios-amount">Rp {{.Amount}}</div>
+                                <div class="ios-status {{.StatusClass}}">
+                                    {{.Status}}
+                                </div>
+                            </div>
+                        </div>
+                        {{else}}
+                        <div class="ios-item" style="justify-content:center; color:var(--muted); padding:40px;">
+                            Belum ada transaksi
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: SUBSCRIPTION -->
+            <div id="view-subscription" class="view-section hidden">
+                <header class="top-bar">
+                    <div class="header-left">
+                        <button class="icon-btn back-btn" data-target="view-profile">←</button>
+                        <h2 class="page-title">Manajemen Langganan</h2>
+                    </div>
+                </header>
+                <div class="content-container" style="padding: 20px;">
+                    <div class="sub-list" id="subscription-list-view">
+                        <!-- Populated by JS -->
+                    </div>
+                    <button class="btn-claim" style="width:100%; margin-top:20px;"
+                        onclick="document.getElementById('add-device-trigger').click()">Buy New Plan</button>
+                </div>
+            </div>
+
+            <!-- VIEW: SETTINGS -->
+            <div id="view-settings" class="view-section hidden">
+                <header class="top-bar">
+                    <div class="header-left">
+                        <button class="icon-btn back-btn" data-target="view-profile">←</button>
+                        <h2 class="page-title">Pengaturan</h2>
+                    </div>
+                </header>
+                <div class="content-container" style="padding: 20px;">
+                    <div class="ios-list-group">
+                        <div class="ios-item">
+                            <span class="ios-title">Dark Mode</span>
+                            <div class="toggle-switch active"></div>
+                        </div>
+                        <div class="ios-item">
+                            <span class="ios-title">Notifications</span>
+                            <div class="toggle-switch active"></div>
+                        </div>
+                        <div class="ios-item">
+                            <span class="ios-title">Haptic Feedback</span>
+                            <div class="toggle-switch active"></div>
+                        </div>
+                        <div class="ios-item">
+                            <span class="ios-title">Stream Quality</span>
+                            <span style="color: #42a5f5;">High (Auto)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: NETWORK (SPEED TEST) -->
+            <div id="view-network" class="view-section hidden">
+                <header class="top-bar">
+                    <div class="header-left">
+                        <button class="icon-btn back-btn" data-target="view-profile">←</button>
+                        <h2 class="page-title">Speed Test</h2>
+                    </div>
+                </header>
+                <div class="content-container" style="padding: 20px; padding-bottom: 100px;">
+
+                    <!-- Speedometer Style Main Display -->
+                    <div
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 24px; padding: 40px 20px; text-align: center; margin-bottom: 25px; box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);">
+                        <div style="position: relative; width: 180px; height: 180px; margin: 0 auto 25px;">
+                            <!-- Circular Progress Ring -->
+                            <svg width="180" height="180" style="transform: rotate(-90deg);">
+                                <circle cx="90" cy="90" r="75" fill="none" stroke="rgba(255,255,255,0.2)"
+                                    stroke-width="12"></circle>
+                                <circle id="speed-progress" cx="90" cy="90" r="75" fill="none" stroke="white"
+                                    stroke-width="12" stroke-dasharray="471" stroke-dashoffset="471"
+                                    stroke-linecap="round" style="transition: stroke-dashoffset 0.5s ease;"></circle>
+                            </svg>
+                            <div
+                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                                <div id="speed-value"
+                                    style="color: white; font-size: 42px; font-weight: 800; line-height: 1;">--</div>
+                                <div
+                                    style="color: rgba(255,255,255,0.9); font-size: 14px; font-weight: 600; margin-top: 5px;">
+                                    Mbps</div>
+                            </div>
+                        </div>
+                        <div id="speed-status"
+                            style="color: white; font-size: 18px; font-weight: 600; margin-bottom: 8px;">Ready to test
+                        </div>
+                        <div id="speed-substatus" style="color: rgba(255,255,255,0.8); font-size: 14px;">Tap the button
+                            to start</div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 25px;">
+                        <!-- Download Speed -->
+                        <div
+                            style="background: #1c1c1e; border-radius: 16px; padding: 18px 12px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0a84ff"
+                                stroke-width="2" style="margin-bottom: 10px;">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <div id="download-speed"
+                                style="color: white; font-size: 20px; font-weight: 700; margin-bottom: 3px;">--</div>
+                            <div style="color: #8e8e93; font-size: 11px; font-weight: 500;">Download</div>
+                        </div>
+
+                        <!-- Upload Speed -->
+                        <div
+                            style="background: #1c1c1e; border-radius: 16px; padding: 18px 12px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34c759"
+                                stroke-width="2" style="margin-bottom: 10px;">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            <div id="upload-speed"
+                                style="color: white; font-size: 20px; font-weight: 700; margin-bottom: 3px;">--</div>
+                            <div style="color: #8e8e93; font-size: 11px; font-weight: 500;">Upload</div>
+                        </div>
+
+                        <!-- Ping -->
+                        <div
+                            style="background: #1c1c1e; border-radius: 16px; padding: 18px 12px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff9f0a"
+                                stroke-width="2" style="margin-bottom: 10px;">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                            <div id="ping-speed"
+                                style="color: white; font-size: 20px; font-weight: 700; margin-bottom: 3px;">--</div>
+                            <div style="color: #8e8e93; font-size: 11px; font-weight: 500;">Ping (ms)</div>
+                        </div>
+                    </div>
+
+                    <!-- Server Info -->
+                    <div
+                        style="background: #1c1c1e; border-radius: 16px; padding: 18px 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div
+                                    style="width: 36px; height: 36px; background: rgba(102, 126, 234, 0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#667eea"
+                                        stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                                        <path
+                                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div style="color: white; font-size: 14px; font-weight: 600;">Test Server</div>
+                                    <div id="server-location" style="color: #8e8e93; font-size: 12px;">Cloudflare CDN
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="server-ping" style="color: #667eea; font-size: 13px; font-weight: 600;">--</div>
+                        </div>
+                    </div>
+
+                    <!-- Start Test Button -->
+                    <button id="start-test-btn" onclick="runSpeedTest()"
+                        style="width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 16px; padding: 18px; font-size: 18px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        Start Test
+                    </button>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Mobile Bottom Nav -->
+        <nav class="mobile-bottom-nav">
+            <a href="#" class="bottom-nav-item active" data-target="view-home">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                    <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                </svg>
+                <span>Cloud Phone</span>
+            </a>
+            <a href="#" class="bottom-nav-item" data-target="view-tools">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                    </path>
+                </svg>
+                <span>Tools</span>
+            </a>
+            <a href="#" class="bottom-nav-item" data-target="view-discover">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <span>Discover</span>
+            </a>
+            <a href="#" class="bottom-nav-item" data-target="view-profile">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Me</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Purchase Modal (New Design) -->
+    <div class="modal-overlay hidden" id="add-device-modal">
+        <div class="modal-content purchase-modal-new">
+            <div class="modal-header">
+                <h3>Purchase Cloud Phone</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+
+            <div class="modal-body-new">
+                <!-- Tier Tabs with Horizontal Scroll -->
+                <div class="tier-scroll-container">
+                    <div class="tier-tabs-wrapper">
+                        <button class="tier-tab-btn active" onclick="selectTier(this, 'vip')">
+                            <span class="tier-name">VIP</span>
+                            <span class="tier-specs">8 Core • 4GB</span>
+                        </button>
+                        <button class="tier-tab-btn" onclick="selectTier(this, 'lite')">
+                            <span class="tier-name">LITE</span>
+                            <span class="tier-specs">8 Core • 3GB</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="purchase-layout-new">
+                    <!-- Left Column -->
+                    <div class="left-column-new">
+                        <div class="cloud-phone-card-new">
+                            <div class="recommended-badge-new">Recommended</div>
+                            <h2 class="cloud-phone-title-new">VIP Cloud Phone</h2>
+                            <p class="cloud-phone-specs-new">8 Core • 4GB RAM • Android 12</p>
+                        </div>
+
+                        <div class="cloud-description-section">
+                            <p class="cloud-subtitle-new">Cloud Phone</p>
+                            <p class="cloud-description-new">Powerful Android cloud device. Ready in seconds.</p>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="right-column-new">
+                        <!-- Server Location -->
+                        <div class="selection-group-new">
+                            <div class="selection-label-new">Server Location</div>
+                            <div class="server-options-new">
+                                <div class="server-option-new selected" onclick="selectServerNew(this)">
+                                    <div class="server-left-new">
+                                        <span class="server-flag-new">🇮🇩</span>
+                                        <span class="server-name-new">Jakarta (Node1)</span>
+                                    </div>
+                                    <span class="server-ping-new ping-excellent-new">14ms</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Plan -->
+                        <div class="selection-group-new">
+                            <div class="selection-label-new">Plan</div>
+                            <div class="plan-options-new">
+                                <div class="plan-option-new selected" id="plan-7-option" data-price="21500"
+                                    onclick="selectPlanNew(this)">
+                                    <div class="plan-left-new">
+                                        <span class="plan-duration-new">7 Days</span>
+                                        <span class="plan-separator-new">—</span>
+                                    </div>
+                                    <span class="plan-price-new">Rp 21.500</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer-new">
+
+                <!-- iOS Style Grouped List (Compact) -->
+                <div
+                    style="background: #1c1c1e; border-radius: 12px; padding: 0 16px; margin-bottom: 12px; overflow: hidden;">
+
+                    <!-- Row 1: Stock Identity -->
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 0.5px solid rgba(84, 84, 88, 0.65); font-size: 13px;">
+                        <span style="color: #fff;">Availability</span>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span id="stock-val" style="color: #8e8e93;">Checking...</span>
+                            <div id="stock-dot"
+                                style="width: 6px; height: 6px; border-radius: 50%; background: #ff9f0a;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Subtotal -->
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 0.5px solid rgba(84, 84, 88, 0.65); font-size: 13px;">
+                        <span style="color: #fff;">Subtotal</span>
+                        <span id="subtotal-display-new" style="color: #8e8e93;">Rp 21.500</span>
+                    </div>
+
+                    <!-- Row 3: Admin Fee -->
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 0.5px solid rgba(84, 84, 88, 0.65); font-size: 13px;">
+                        <span style="color: #fff;">Admin Fee</span>
+                        <span style="color: #8e8e93;">Rp 500</span>
+                    </div>
+
+                    <!-- Row 4: Total -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0;">
+                        <span style="color: #fff; font-weight: 500; font-size: 14px;">Total</span>
+                        <span class="total-amount-new" id="total-display-new"
+                            style="color: #fff; font-weight: 600; font-size: 16px;">Rp 22.000</span>
+                    </div>
+                </div>
+
+                <button class="btn-continue-new" id="pay-button-new" onclick="startPakasirPayment()">Pay with
+                    Pakasir</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="/static/js/dashboard.js?v=pakasir-v1"></script>
+
+    <!-- INLINE PAYMENT SCRIPT (DEBUG FORCE) -->
+    <!-- Payment Script Moved to dashboard.js -->
+
+
+    <!-- Claim Device Modal -->
+    <!-- <div class="modal-overlay hidden" id="claim-modal">
+        <div class="modal-content claim-modal-content">
+            <div class="modal-header">
+                <h3>🎉 Claim Your Device</h3>
+                <button class="close-modal" onclick="closeClaimModal()">&times;</button>
+            </div>
+            <div class="modal-body-new">
+                <div class="claim-info">
+                    <p class="claim-plan-name" id="claim-plan-name">Cloud Phone Subscription</p>
+                    <p class="claim-order-id" id="claim-order-id">#ORDER-123456</p>
+                    <p class="claim-description">Click below to allocate your cloud device. You'll be able to stream it
+                        immediately!</p>
+                </div>
+            </div>
+            <div class="modal-footer-new">
+                <button class="btn-claim" id="btn-claim-device" onclick="claimDevice()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                    </svg>
+                    Claim Device Now
+                </button>
+            </div>
+        </div>
+    </div> -->
+
+    <script>
+        let currentClaimOrderId = null;
+
+        function openClaimModal(orderId, planName) {
+            currentClaimOrderId = orderId;
+            document.getElementById('claim-plan-name').textContent = planName;
+            document.getElementById('claim-order-id').textContent = '#' + orderId;
+            document.getElementById('claim-modal').classList.remove('hidden');
+        }
+
+        function closeClaimModal() {
+            document.getElementById('claim-modal').classList.add('hidden');
+            currentClaimOrderId = null;
+        }
+
+        async function claimDevice() {
+            if (!currentClaimOrderId) return;
+
+            const btn = document.getElementById('btn-claim-device');
+            btn.disabled = true;
+            btn.innerHTML = '<span style="animation: spin 1s linear infinite;">⏳</span> Allocating...';
+
+            try {
+                const response = await fetch('/api/allocate-device', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ order_id: currentClaimOrderId })
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.device) {
+                    // Build stream URL with token in both hash and ws parameter
+                    const udid = data.device.DeviceUDID;
+                    const token = data.device.Token;
+                    const streamUrl = `http://localhost:8000/#!action=stream&udid=${udid}&player=webcodecs&ws=ws%3A%2F%2Flocalhost%3A8000%2F%3Faction%3Dproxy-adb%26remote%3Dtcp%253A8886%26udid%3D${udid}%26token%3D${token}&token=${token}`;
+
+                    // Open stream in same tab
+                    window.location.href = streamUrl;
+
+                    // Close modal (not reached if redirected, but good practice if behavior changes)
+                    closeClaimModal();
+                    // No reload needed if we redirect away
+                } else {
+                    alert('❌ Failed to allocate device. Please try again or contact support.');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Claim Device Now';
+                }
+            } catch (error) {
+                console.error(error);
+                alert('❌ Error allocating device.');
+                btn.disabled = false;
+                btn.innerHTML = 'Claim Device Now';
+            }
+        }
+
+        // Close modal on outside click
+        document.addEventListener('click', function (e) {
+            const claimModal = document.getElementById('claim-modal');
+            if (e.target === claimModal) {
+                closeClaimModal();
+            }
+        });
+    </script>
+
+    <!-- Auto-check and update pending transactions -->
+    <script>
+        let checkInterval = null;
+
+        function updateTransactionStatus() {
+            const pendingItems = document.querySelectorAll('.ios-status.status-pending');
+
+            if (pendingItems.length === 0) {
+                if (checkInterval) {
+                    clearInterval(checkInterval);
+                    console.log('✓ No pending transactions. Auto-check stopped.');
+                }
+                return;
+            }
+
+            console.log(`🔄 Checking ${pendingItems.length} pending transactions...`);
+
+            fetch('/api/fix-pending')
+                .then(res => res.json())
+                .then(data => {
+                    console.log('Status check result:', data);
+
+                    if (data.updated > 0 && data.results) {
+                        data.results.forEach(result => {
+                            if (result.status === 'updated') {
+                                updateTransactionUI(result.order_id);
+                            }
+                        });
+                    }
+
+                    setTimeout(() => {
+                        if (document.querySelectorAll('.ios-status.status-pending').length === 0) {
+                            clearInterval(checkInterval);
+                            console.log('✅ All transactions updated!');
+                        }
+                    }, 500);
+                })
+                .catch(err => {
+                    console.error('❌ Error checking transaction status:', err);
+                });
+        }
+
+        function updateTransactionUI(orderId) {
+            const allItems = document.querySelectorAll('.ios-item');
+
+            allItems.forEach(item => {
+                const orderText = item.textContent;
+                if (orderText.includes(orderId)) {
+                    const statusBadge = item.querySelector('.ios-status');
+                    if (statusBadge && statusBadge.classList.contains('status-pending')) {
+                        statusBadge.classList.remove('status-pending');
+                        statusBadge.classList.add('status-success');
+                        statusBadge.textContent = 'success';
+                    }
+
+                    const icon = item.querySelector('.ios-icon');
+                    if (icon) {
+                        icon.classList.remove('icon-orange');
+                        icon.classList.add('icon-green');
+                        icon.textContent = '✓';
+                    }
+
+                    console.log(`✅ Updated ${orderId} to success`);
+
+                    // AUTO-ALLOCATE (Claim) Logic
+                    console.log(`🚀 Auto-triggering allocation for ${orderId}...`);
+                    allocateOrder(orderId).then(success => {
+                        if (success) {
+                            console.log(`🎉 Allocation successful for ${orderId}, reloading...`);
+                            window.location.reload();
+                        } else {
+                            console.error(`⚠️ Allocation failed for ${orderId}`);
+                            // Optional: Show "Claim" button instead of full reload?
+                        }
+                    });
+                }
+
+                document.addEventListener('DOMContentLoaded', function () {
+                    const hasPending = document.querySelectorAll('.ios-status.status-pending').length > 0;
+
+                    if (hasPending) {
+                        console.log('⏳ Pending transactions detected. Starting auto-check every 5 seconds...');
+                        updateTransactionStatus();
+                        checkInterval = setInterval(updateTransactionStatus, 5000);
+                    }
+                });
+    </script>
+
+    <style>
+        /* Modal macOS Style - Modern Dark Theme */
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .purchase-modal-new {
+            max-width: 980px;
+            width: 100%;
+            border-radius: 20px;
+            background: #1c1c1e;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
+        }
+
+        .modal-header {
+            padding: 24px 32px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .modal-header h3 {
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .close-modal {
+            color: #8e8e93;
+            transition: color 0.2s;
+        }
+
+        .close-modal:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-body-new {
+            padding: 32px;
+            overflow-y: auto;
+            max-height: calc(90vh - 200px);
+        }
+
+        /* Tier Tabs with Pill Scroll */
+        .tier-scroll-container {
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .tier-tabs-wrapper {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 4px 4px 12px 4px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Pill-shaped scrollbar (kaleng style) */
+        .tier-tabs-wrapper::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .tier-tabs-wrapper::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            margin: 0 20px;
+        }
+
+        .tier-tabs-wrapper::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, #4a90e2 0%, #357abd 100%);
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
+
+        .tier-tabs-wrapper::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(90deg, #5a9ef2 0%, #4588cd 100%);
+        }
+
+        .tier-tab-btn {
+            flex-shrink: 0;
+            background: #2c2c2e;
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 16px 24px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 140px;
+        }
+
+        .tier-tab-btn:hover {
+            background: #3a3a3c;
+            border-color: rgba(74, 144, 226, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .tier-tab-btn.active {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.25) 0%, rgba(53, 122, 189, 0.25) 100%);
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15), 0 4px 12px rgba(74, 144, 226, 0.2);
+        }
+
+        .tier-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .tier-specs {
+            font-size: 12px;
+            font-weight: 500;
+            color: #8e8e93;
+            letter-spacing: 0.2px;
+        }
+
+        .tier-tab-btn.active .tier-specs {
+            color: #4a90e2;
+        }
+
+        .purchase-layout-new {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        /* Left Column */
+        .left-column-new {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .cloud-phone-card-new {
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            border-radius: 18px;
+            padding: 36px 32px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(74, 144, 226, 0.3);
+        }
+
+        .cloud-phone-card-new::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -15%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .recommended-badge-new {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.25);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            letter-spacing: 0.3px;
+        }
+
+        .cloud-phone-title-new {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: -0.5px;
+        }
+
+        .cloud-phone-specs-new {
+            font-size: 15px;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+
+        .cloud-description-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .cloud-subtitle-new {
+            font-size: 13px;
+            color: #8e8e93;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cloud-description-new {
+            font-size: 15px;
+            color: #aeaeb2;
+            line-height: 1.6;
+        }
+
+        /* Right Column */
+        .right-column-new {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .selection-group-new {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .selection-label-new {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: -0.2px;
+        }
+
+        /* Server Options */
+        .server-options-new {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .server-option-new {
+            background: #2c2c2e;
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .server-option-new:hover {
+            background: #3a3a3c;
+            border-color: rgba(74, 144, 226, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .server-option-new.selected {
+            background: rgba(74, 144, 226, 0.15);
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        .server-left-new {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .server-flag-new {
+            font-size: 22px;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+        }
+
+        .server-name-new {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: -0.2px;
+        }
+
+        .server-ping-new {
+            font-size: 13px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 10px;
+            letter-spacing: 0.3px;
+        }
+
+        .ping-excellent-new {
+            background: rgba(52, 199, 89, 0.2);
+            color: #30d158;
+        }
+
+        .ping-good-new {
+            background: rgba(10, 132, 255, 0.2);
+            color: #0a84ff;
+        }
+
+        .ping-poor-new {
+            background: rgba(255, 69, 58, 0.2);
+            color: #ff453a;
+        }
+
+        /* Plan Options */
+        .plan-options-new {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .plan-option-new {
+            background: #2c2c2e;
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .plan-option-new:hover {
+            background: #3a3a3c;
+            border-color: rgba(74, 144, 226, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .plan-option-new.selected {
+            background: rgba(74, 144, 226, 0.15);
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        .plan-left-new {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+
+        .plan-duration-new {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: -0.2px;
+        }
+
+        .plan-separator-new {
+            color: #48484a;
+            font-weight: 300;
+        }
+
+        .plan-price-new {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.3px;
+        }
+
+        /* Modal Footer */
+        .modal-footer-new {
+            padding: 24px 32px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1c1c1e;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .total-section-new {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+
+        .total-label-new {
+            font-size: 15px;
+            color: #8e8e93;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+        }
+
+        .total-amount-new {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .total-amount {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        /* iOS History List Style */
+        .ios-list-group {
+            background: #1c1c1e;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .ios-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .ios-item:last-child {
+            border-bottom: none;
+        }
+
+        .ios-left {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+        }
+
+        .ios-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .icon-blue {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .icon-green {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .icon-orange {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .ios-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ios-title {
+            font-weight: 600;
+            font-size: 15px;
+            color: white;
+        }
+
+        .ios-subtitle {
+            font-size: 13px;
+            color: #8e8e93;
+        }
+
+        .ios-right {
+            text-align: right;
+        }
+
+        .ios-amount {
+            font-weight: 600;
+            color: white;
+        }
+
+        .ios-status {
+            font-size: 12px;
+            text-align: center;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .status-success {
+            color: #22c55e !important;
+            background: rgba(34, 197, 94, 0.15) !important;
+            border: 1px solid rgba(34, 197, 94, 0.3) !important;
+        }
+
+        .status-pending {
+            color: #f59e0b !important;
+            background: rgba(245, 158, 11, 0.15) !important;
+            border: 1px solid rgba(245, 158, 11, 0.3) !important;
+        }
+
+        .status-failed {
+            color: #ef4444 !important;
+            background: rgba(239, 68, 68, 0.15) !important;
+            border: 1px solid rgba(239, 68, 68, 0.3) !important;
+        }
+
+        /* Clickable Success Transaction */
+        .transaction-claimable {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .transaction-claimable:hover {
+            background: rgba(34, 197, 94, 0.08) !important;
+            transform: translateX(4px);
+        }
+
+        .transaction-claimable:active {
+            transform: scale(0.98);
+        }
+
+        /* Claim Modal */
+        .claim-modal-content {
+            max-width: 480px;
+        }
+
+        .claim-info {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .claim-plan-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .claim-order-id {
+            font-size: 13px;
+            color: #8e8e93;
+            margin-bottom: 16px;
+        }
+
+        .claim-description {
+            font-size: 14px;
+            color: #aeaeb2;
+            line-height: 1.6;
+        }
+
+        .btn-claim {
+            width: 100%;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-claim:hover {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
+        }
+
+        .btn-claim:active {
+            transform: translateY(0);
+        }
+
+        .btn-claim:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Prevent horizontal scroll on mobile */
+        @media (max-width: 768px) {
+            body {
+                overflow-x: hidden;
+            }
+
+            .dashboard-container {
+                overflow-x: hidden;
+                max-width: 100vw;
+            }
+
+            .main-content {
+                overflow-x: hidden;
+                max-width: 100%;
+            }
+
+            .tools-container {
+                overflow-x: hidden;
+                max-width: 100%;
+            }
+
+            * {
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+        }
+
+        /* Mobile Responsive for Transaction List */
+        @media (max-width: 768px) {
+            .ios-list-group {
+                margin-top: 10px;
+            }
+
+            .ios-item {
+                padding: 12px 16px;
+                flex-wrap: nowrap;
+            }
+
+            .ios-icon {
+                width: 36px;
+                height: 36px;
+                flex-shrink: 0;
+            }
+
+            .ios-icon svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            .ios-left {
+                gap: 10px;
+                flex: 1;
+                min-width: 0;
+            }
+
+            .ios-info {
+                overflow: hidden;
+            }
+
+            .ios-title {
+                font-size: 14px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .ios-subtitle {
+                font-size: 11px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .ios-right {
+                text-align: right;
+                flex-shrink: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 6px;
+            }
+
+            .ios-amount {
+                font-size: 14px;
+                font-weight: 700;
+            }
+
+            .ios-status {
+                font-size: 10px;
+                padding: 3px 8px;
+                border-radius: 5px;
+            }
+        }
+
+        /* Extra small mobile */
+        @media (max-width: 375px) {
+            .ios-item {
+                padding: 10px 12px;
+            }
+
+            .ios-icon {
+                width: 32px;
+                height: 32px;
+            }
+
+            .ios-icon svg {
+                width: 16px;
+                height: 16px;
+            }
+
+            .ios-title {
+                font-size: 13px;
+            }
+
+            .ios-subtitle {
+                font-size: 10px;
+            }
+
+            .ios-amount {
+                font-size: 13px;
+            }
+
+            .ios-status {
+                font-size: 9px;
+                padding: 2px 6px;
+            }
+        }
+
+        /* Toggle Switch Active State */
+        .toggle-switch.active {
+            background: #34c759;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(18px);
+        }
+
+        .btn-continue-new {
+            background: #0a84ff;
+            color: white;
+            border: none;
+            padding: 14px 48px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: -0.2px;
+            box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
+        }
+
+        .btn-continue-new:hover {
+            background: #0071e3;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(10, 132, 255, 0.4);
+        }
+
+        .btn-continue-new:active {
+            transform: translateY(0);
+        }
+
+        /* Scrollbar styling for dark mode */
+        .modal-body-new::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-body-new::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .modal-body-new::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .modal-body-new::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modal-overlay {
+                padding: 0;
+                align-items: flex-end;
+            }
+
+            .modal-content,
+            .purchase-modal-new {
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                border-radius: 16px 16px 0 0;
+                max-height: 88vh;
+            }
+
+            .modal-header {
+                padding: 14px 18px 12px;
+            }
+
+            .modal-header h3 {
+                font-size: 16px;
+            }
+
+            .close-modal {
+                width: 30px;
+                height: 30px;
+                font-size: 20px;
+            }
+
+            .modal-body-new {
+                padding: 16px 14px;
+                max-height: calc(88vh - 140px);
+            }
+
+            /* Tier Tabs Mobile */
+            .tier-scroll-container {
+                margin-left: -14px;
+                margin-right: -14px;
+                padding: 0 14px;
+                margin-bottom: 16px;
+            }
+
+            .tier-tabs-wrapper {
+                gap: 8px;
+                padding: 4px 4px 10px 4px;
+            }
+
+            .tier-tabs-wrapper::-webkit-scrollbar {
+                height: 5px;
+            }
+
+            .tier-tabs-wrapper::-webkit-scrollbar-track {
+                margin: 0 8px;
+            }
+
+            .tier-tab-btn {
+                min-width: 100px;
+                padding: 10px 14px;
+                border-radius: 10px;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .tier-tab-btn:active {
+                transform: scale(0.97);
+            }
+
+            .tier-name {
+                font-size: 13px;
+                letter-spacing: 0.3px;
+            }
+
+            .tier-specs {
+                font-size: 10px;
+            }
+
+            /* Layout Mobile */
+            .purchase-layout-new {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .left-column-new {
+                gap: 14px;
+            }
+
+            .right-column-new {
+                gap: 16px;
+            }
+
+            /* Cloud Phone Card Mobile */
+            .cloud-phone-card-new {
+                padding: 20px 16px;
+                border-radius: 14px;
+            }
+
+            .cloud-phone-card-new::before {
+                width: 150px;
+                height: 150px;
+            }
+
+            .recommended-badge-new {
+                font-size: 10px;
+                padding: 4px 10px;
+                margin-bottom: 12px;
+                border-radius: 16px;
+            }
+
+            .cloud-phone-title-new {
+                font-size: 20px;
+                margin-bottom: 6px;
+                letter-spacing: -0.3px;
+            }
+
+            .cloud-phone-specs-new {
+                font-size: 12px;
+            }
+
+            .cloud-subtitle-new {
+                font-size: 11px;
+                letter-spacing: 0.3px;
+            }
+
+            .cloud-description-new {
+                font-size: 13px;
+                line-height: 1.4;
+            }
+
+            /* Selection Groups Mobile */
+            .selection-group-new {
+                gap: 8px;
+            }
+
+            .selection-label-new {
+                font-size: 13px;
+            }
+
+            /* Server & Plan Options Mobile */
+            .server-options-new,
+            .plan-options-new {
+                gap: 7px;
+            }
+
+            .server-option-new,
+            .plan-option-new {
+                padding: 12px 14px;
+                border-width: 1.5px;
+                border-radius: 10px;
+                min-height: 48px;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .server-option-new:active,
+            .plan-option-new:active {
+                transform: scale(0.98);
+            }
+
+            .server-left-new {
+                gap: 10px;
+            }
+
+            .server-flag-new {
+                font-size: 18px;
+            }
+
+            .server-name-new {
+                font-size: 13px;
+            }
+
+            .server-ping-new {
+                font-size: 11px;
+                padding: 3px 9px;
+                border-radius: 7px;
+            }
+
+            .plan-left-new {
+                gap: 10px;
+            }
+
+            .plan-duration-new {
+                font-size: 13px;
+            }
+
+            .plan-price-new {
+                font-size: 14px;
+                font-weight: 700;
+            }
+
+            /* Footer Mobile */
+            .modal-footer-new {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+                padding: 14px 18px 18px;
+                position: sticky;
+                bottom: 0;
+                background: #1c1c1e;
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .total-section-new {
+                justify-content: center;
+            }
+
+            .total-label-new {
+                font-size: 13px;
+            }
+
+            .total-amount-new {
+                font-size: 24px;
+                letter-spacing: -0.4px;
+            }
+
+            .btn-continue-new {
+                width: 100%;
+                padding: 13px 32px;
+                font-size: 15px;
+                border-radius: 11px;
+                min-height: 48px;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
+                font-weight: 600;
+            }
+
+            .btn-continue-new:active {
+                transform: scale(0.98);
+            }
+
+            /* Smooth scrolling for modal body */
+            .modal-body-new {
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior: contain;
+            }
+        }
+
+        /* iPhone XR and similar (414px width) */
+        @media (max-width: 414px) {
+            .modal-body-new {
+                padding: 14px 12px;
+            }
+
+            .tier-scroll-container {
+                margin-left: -12px;
+                margin-right: -12px;
+                padding: 0 12px;
+                margin-bottom: 14px;
+            }
+
+            .tier-tab-btn {
+                min-width: 95px;
+                padding: 9px 12px;
+            }
+
+            .tier-name {
+                font-size: 12px;
+            }
+
+            .cloud-phone-title-new {
+                font-size: 19px;
+            }
+
+            .cloud-phone-card-new {
+                padding: 18px 14px;
+            }
+
+            .purchase-layout-new {
+                gap: 14px;
+            }
+
+            .right-column-new {
+                gap: 14px;
+            }
+
+            .selection-group-new {
+                gap: 7px;
+            }
+
+            .server-options-new,
+            .plan-options-new {
+                gap: 6px;
+            }
+        }
+
+        /* Extra small devices (iPhone SE, etc) */
+        @media (max-width: 375px) {
+            .modal-header {
+                padding: 12px 14px 10px;
+            }
+
+            .modal-header h3 {
+                font-size: 15px;
+            }
+
+            .modal-body-new {
+                padding: 12px 10px;
+                max-height: calc(88vh - 135px);
+            }
+
+            .tier-scroll-container {
+                margin-left: -10px;
+                margin-right: -10px;
+                padding: 0 10px;
+            }
+
+            .tier-tab-btn {
+                min-width: 90px;
+                padding: 8px 11px;
+            }
+
+            .tier-name {
+                font-size: 12px;
+            }
+
+            .tier-specs {
+                font-size: 9px;
+            }
+
+            .cloud-phone-title-new {
+                font-size: 18px;
+            }
+
+            .cloud-phone-specs-new {
+                font-size: 11px;
+            }
+
+            .cloud-phone-card-new {
+                padding: 16px 12px;
+            }
+
+            .server-option-new,
+            .plan-option-new {
+                padding: 11px 12px;
+                min-height: 46px;
+            }
+
+            .server-name-new,
+            .plan-duration-new {
+                font-size: 12px;
+            }
+
+            .plan-price-new {
+                font-size: 13px;
+            }
+
+            .total-amount-new {
+                font-size: 22px;
+            }
+
+            .modal-footer-new {
+                padding: 12px 14px 16px;
+            }
+
+            .btn-continue-new {
+                min-height: 46px;
+                font-size: 14px;
+            }
+        }
+
+        /* Landscape mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .modal-overlay {
+                align-items: center;
+            }
+
+            .modal-content,
+            .purchase-modal-new {
+                max-height: 92vh;
+                border-radius: 16px;
+            }
+
+            .modal-body-new {
+                max-height: calc(92vh - 120px);
+                padding: 12px 14px;
+            }
+
+            .purchase-layout-new {
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+            }
+
+            .cloud-phone-card-new {
+                padding: 14px 12px;
+            }
+
+            .cloud-phone-title-new {
+                font-size: 18px;
+            }
+
+            .tier-tab-btn {
+                min-width: 90px;
+                padding: 8px 12px;
+            }
+
+            .tier-name {
+                font-size: 12px;
+            }
+
+            .server-option-new,
+            .plan-option-new {
+                padding: 10px 12px;
+                min-height: 44px;
+            }
+
+            .modal-footer-new {
+                padding: 12px 14px;
+            }
+        }
+
+        /* Disable hover effects on touch devices */
+        @media (hover: none) and (pointer: coarse) {
+
+            .tier-tab-btn:hover,
+            .server-option-new:hover,
+            .plan-option-new:hover,
+            .btn-continue-new:hover,
+            .close-modal:hover {
+                transform: none;
+                background: inherit;
+                border-color: inherit;
+            }
+
+            .tier-tab-btn.active:hover {
+                background: linear-gradient(135deg, rgba(74, 144, 226, 0.25) 0%, rgba(53, 122, 189, 0.25) 100%);
+            }
+
+            .server-option-new.selected:hover,
+            .plan-option-new.selected:hover {
+                background: rgba(74, 144, 226, 0.15);
+            }
+        }
+    </style>
+
+    <script>
+                // Tier Selection
+                function selectTier(element, tier) {
+                    // Remove active class from all tier tabs
+                    document.querySelectorAll('.tier-tab-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    element.classList.add('active');
+                    const specs = {
+                        lite: { core: '8 Core', ram: '3GB RAM', rom: '32GB ROM', android: 'Android 10' },
+                        vip: { core: '8 Core', ram: '4GB RAM', rom: '64GB ROM', android: 'Android 10' }
+                    };
+
+                    // Update card title and specs
+                    const tierNames = {
+                        vip: 'VIP',
+                        lite: 'LITE'
+                    };
+
+                    document.querySelector('.cloud-phone-title-new').textContent = tierNames[tier] + ' Cloud Phone';
+                    document.querySelector('.cloud-phone-specs-new').textContent =
+                        `${specs[tier].core} • ${specs[tier].ram} • ${specs[tier].android}`;
+
+                    // Update Price
+                    const prices = {
+                        lite: 1,
+                        vip: 21500
+                    };
+
+                    const price = prices[tier];
+                    const planOption = document.getElementById('plan-7-option');
+                    if (planOption) {
+                        planOption.setAttribute('data-price', price);
+                        const priceEl = planOption.querySelector('.plan-price-new');
+                        if (priceEl) {
+                            priceEl.textContent = 'Rp ' + price.toLocaleString('id-ID');
+                        }
+                        // Update totals
+                        selectPlanNew(planOption);
+                    }
+
+                    // Sync with Global State for payment & stock
+                    if (window) {
+                        window.selectedTier = tier;
+                        if (typeof window.updateStockDisplay === 'function') {
+                            window.updateStockDisplay();
+                        }
+                    }
+                }
+
+                // Server Selection
+                function selectServerNew(element) {
+                    document.querySelectorAll('.server-option-new').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    element.classList.add('selected');
+                }
+
+                // Plan Selection
+                function selectPlanNew(element) {
+                    document.querySelectorAll('.plan-option-new').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    element.classList.add('selected');
+
+                    const price = parseInt(element.getAttribute('data-price'));
+                    const adminFee = 500;
+                    const total = price + adminFee;
+
+                    // Update Subtotal & Total
+                    const subEl = document.getElementById('subtotal-display-new');
+                    const totEl = document.getElementById('total-display-new');
+
+                    if (subEl) subEl.textContent = 'Rp ' + price.toLocaleString('id-ID');
+                    if (totEl) totEl.textContent = 'Rp ' + total.toLocaleString('id-ID');
+                }
+                // Continue Handler
+                function handleContinueNew() {
+                    alert('Proceeding to payment...');
+                }
+
+                // Touch Swipe for Tier Tabs
+                let tierTabsWrapper = null;
+                let startX = 0;
+                let scrollLeft = 0;
+                let isDown = false;
+
+                document.addEventListener('DOMContentLoaded', function () {
+                    tierTabsWrapper = document.querySelector('.tier-tabs-wrapper');
+
+                    if (tierTabsWrapper) {
+                        // Mouse events
+                        tierTabsWrapper.addEventListener('mousedown', (e) => {
+                            isDown = true;
+                            tierTabsWrapper.style.cursor = 'grabbing';
+                            startX = e.pageX - tierTabsWrapper.offsetLeft;
+                            scrollLeft = tierTabsWrapper.scrollLeft;
+                        });
+
+                        tierTabsWrapper.addEventListener('mouseleave', () => {
+                            isDown = false;
+                            tierTabsWrapper.style.cursor = 'grab';
+                        });
+
+                        tierTabsWrapper.addEventListener('mouseup', () => {
+                            isDown = false;
+                            tierTabsWrapper.style.cursor = 'grab';
+                        });
+
+                        tierTabsWrapper.addEventListener('mousemove', (e) => {
+                            if (!isDown) return;
+                            e.preventDefault();
+                            const x = e.pageX - tierTabsWrapper.offsetLeft;
+                            const walk = (x - startX) * 2;
+                            tierTabsWrapper.scrollLeft = scrollLeft - walk;
+                        });
+
+                        // Touch events for mobile
+                        let touchStartX = 0;
+                        let touchScrollLeft = 0;
+
+                        tierTabsWrapper.addEventListener('touchstart', (e) => {
+                            touchStartX = e.touches[0].pageX - tierTabsWrapper.offsetLeft;
+                            touchScrollLeft = tierTabsWrapper.scrollLeft;
+                        }, { passive: true });
+
+                        tierTabsWrapper.addEventListener('touchmove', (e) => {
+                            const x = e.touches[0].pageX - tierTabsWrapper.offsetLeft;
+                            const walk = (x - touchStartX) * 2;
+                            tierTabsWrapper.scrollLeft = touchScrollLeft - walk;
+                        }, { passive: true });
+                    }
+
+                    // Smooth modal open animation
+                    const modal = document.getElementById('add-device-modal');
+                    if (modal) {
+                        const modalContent = modal.querySelector('.modal-content');
+
+                        // Add open animation class
+                        modal.addEventListener('transitionend', function (e) {
+                            if (e.target === modal && !modal.classList.contains('hidden')) {
+                                modalContent.style.animation = 'modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                            }
+                        });
+                    }
+
+                    // Prevent body scroll when modal is open
+                    const modalOverlay = document.querySelector('.modal-overlay');
+                    if (modalOverlay) {
+                        const observer = new MutationObserver(function (mutations) {
+                            mutations.forEach(function (mutation) {
+                                if (mutation.attributeName === 'class') {
+                                    if (modalOverlay.classList.contains('hidden')) {
+                                        document.body.style.overflow = '';
+                                    } else {
+                                        document.body.style.overflow = 'hidden';
+                                    }
+                                }
+                            });
+                        });
+
+                        observer.observe(modalOverlay, { attributes: true });
+                    }
+
+                    // Add swipe down to close on mobile
+                    let touchStartY = 0;
+                    let modalBody = document.querySelector('.modal-body-new');
+
+                    if (modalBody) {
+                        modalBody.addEventListener('touchstart', (e) => {
+                            if (modalBody.scrollTop === 0) {
+                                touchStartY = e.touches[0].clientY;
+                            }
+                        }, { passive: true });
+
+                        modalBody.addEventListener('touchmove', (e) => {
+                            if (modalBody.scrollTop === 0) {
+                                const touchY = e.touches[0].clientY;
+                                const deltaY = touchY - touchStartY;
+
+                                if (deltaY > 100) {
+                                    // Close modal on swipe down
+                                    document.querySelector('.close-modal').click();
+                                }
+                            }
+                        }, { passive: true });
+                    }
+                });
+
+                // Add modal animation keyframes
+                const style = document.createElement('style');
+                style.textContent = `
+            @keyframes modalSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes modalSlideOut {
+                from {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+            }
+
+            .modal-overlay {
+                transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .modal-overlay.hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .modal-content,
+            .purchase-modal-new {
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            @media (max-width: 768px) {
+                @keyframes modalSlideIn {
+                    from {
+                        transform: translateY(100%);
+                    }
+                    to {
+                        transform: translateY(0);
+                    }
+                }
+                
+                @keyframes modalSlideOut {
+                    from {
+                        transform: translateY(0);
+                    }
+                    to {
+                        transform: translateY(100%);
+                    }
+                }
+                
+                .purchase-modal-new {
+                    animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+            }
+        `;
+                document.head.appendChild(style);
+
+                // --- CLAIM LOGIC & AUTO-CLAIM ---
+                let selectedClaimOrderId = null;
+
+                window.openClaimModal = function (orderId, plan) {
+                    selectedClaimOrderId = orderId;
+                    const elPlan = document.getElementById('claim-plan-name');
+                    const elOrder = document.getElementById('claim-order-id');
+                    const modal = document.getElementById('claim-modal');
+
+                    if (elPlan) elPlan.textContent = plan;
+                    if (elOrder) elOrder.textContent = '#' + orderId;
+                    if (modal) modal.classList.remove('hidden');
+                }
+
+                window.closeClaimModal = function () {
+                    const modal = document.getElementById('claim-modal');
+                    if (modal) modal.classList.add('hidden');
+                }
+
+                window.claimDevice = async function () {
+                    if (!selectedClaimOrderId) return;
+                    const btn = document.getElementById('btn-claim-device');
+                    const originalText = btn ? btn.innerHTML : 'Claim';
+                    if (btn) { btn.innerHTML = 'Allocating...'; btn.disabled = true; }
+
+                    try {
+                        const response = await fetch('/api/allocate-device', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ order_id: selectedClaimOrderId })
+                        });
+
+                        if (response.ok) {
+                            alert('Device Claimed Successfully!');
+                            location.reload();
+                        } else {
+                            const txt = await response.text();
+                            alert('Failed: ' + txt);
+                            if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
+                        }
+                    } catch (e) {
+                        alert('Error: ' + e);
+                        if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
+                    }
+                }
+
+                // SMART AUTO-CLAIM SYSTEM (Dual Check)
+                document.addEventListener('DOMContentLoaded', async () => {
+                    // Helper function
+                    async function allocateOrder(orderId) {
+                        try {
+                            console.log("Allocating:", orderId);
+                            const res = await fetch('/api/allocate-device', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ order_id: orderId })
+                            });
+                            return res.ok;
+                        } catch (e) { return false; }
+                    }
+
+                    // 1. Client-Side (LocalStorage)
+                    const pendingOrder = localStorage.getItem("pending_claim_order");
+                    if (pendingOrder) {
+                        localStorage.removeItem("pending_claim_order");
+                        localStorage.removeItem("pending_claim_plan");
+                        await allocateOrder(pendingOrder);
+                        location.reload();
+                        return;
+                    }
+
+                    // 2. Server-Side (Recovery from Database)
+                    const pendingServerClaims = [
+                        {{ range .PendingClaims }}
+                 "{{.OrderID}}",
+                    {{ end }}
+            ];
+
+            if (pendingServerClaims.length > 0) {
+                const btn = document.getElementById('add-device-card-btn');
+
+                // Attempt automatic recovery once
+                console.log("Found pending claims:", pendingServerClaims);
+
+                // If there are many, or if it failed before, maybe we shouldn't block the UI.
+                // But let's try to set state.
+                if (btn) {
+                    // Change visual to indicate work
+                    btn.innerHTML = '<div style="font-size:12px">Allocating...</div>';
+                }
+
+                let recovered = 0;
+                let failed = 0;
+
+                for (const orderId of pendingServerClaims) {
+                    const success = await allocateOrder(orderId);
+                    if (success) {
+                        recovered++;
+                    } else {
+                        failed++;
+                    }
+                }
+
+                if (recovered > 0) {
+                    alert("System recovered " + recovered + " unclaimed device(s)!");
+                    location.reload();
+                } else if (failed > 0) {
+                    // If failed, return button to normal but maybe warn?
+                    // Or better, let them try again manually by clicking.
+                    console.warn("Auto-recovery failed for " + failed + " orders.");
+                    if (btn) {
+                        // Restore button
+                        btn.innerHTML = '<div class="plus-circle">+</div><span>Purchase Cloud Phone</span>';
+                        // Ideally show a toast or something, but for now just unblock
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- Duplicate script removed -->
+
+    <script>
+        // --- View Logic Integration ---
+
+        // Observe View Changes to trigger specific logic
+        const viewObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    const target = mutation.target;
+                    if (target.classList.contains('active') && !target.classList.contains('hidden')) {
+                        if (target.id === 'view-subscription') loadSubscriptionView();
+                        if (target.id === 'view-network') initNetworkTest();
+                    }
+                }
+            });
+        });
+
+        // Start observing views
+        ['view-subscription', 'view-network'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) viewObserver.observe(el, { attributes: true });
+        });
+
+        // Load Subscription Data into View
+        function loadSubscriptionView() {
+            const list = document.getElementById('subscription-list-view');
+            list.innerHTML = '';
+
+            const devices = document.querySelectorAll('.device-card:not(.buy-card)');
+            if (devices.length === 0) {
+                list.innerHTML = '<p style="color: #8e8e93; text-align: center; margin-top: 50px;">No active subscriptions found.</p>';
+            } else {
+                devices.forEach(card => {
+                    const udid = card.querySelector('h3').textContent;
+                    const expiry = new Date();
+                    expiry.setDate(expiry.getDate() + 30);
+                    const expiryStr = expiry.toLocaleDateString();
+
+                    const item = document.createElement('div');
+                    item.className = 'ios-item';
+                    item.style.marginBottom = '10px';
+                    item.innerHTML = `
+                        <div class="ios-left">
+                            <div class="ios-icon icon-blue">📱</div>
+                            <div class="ios-info">
+                                <span class="ios-title">Cloud Phone (${udid})</span>
+                                <span class="ios-subtitle">Renews: ${expiryStr}</span>
+                            </div>
+                        </div>
+                        <div class="ios-right">
+                             <span style="color:#30d158; font-weight:600; font-size:13px;">Active</span>
+                        </div>
+                    `;
+                    list.appendChild(item);
+                });
+            }
+        }
+
+        // Speed Test Logic - Like Speedtest.net
+        async function runSpeedTest() {
+            const speedValue = document.getElementById('speed-value');
+            const speedStatus = document.getElementById('speed-substatus');
+            const downloadEl = document.getElementById('download-speed');
+            const uploadEl = document.getElementById('upload-speed');
+            const pingEl = document.getElementById('ping-speed');
+            const serverPing = document.getElementById('server-ping');
+            const progressRing = document.getElementById('speed-progress');
+            const startBtn = document.getElementById('start-test-btn');
+
+            // Disable button during test
+            startBtn.disabled = true;
+            startBtn.style.opacity = '0.6';
+
+            // Reset values
+            speedValue.textContent = '0';
+            downloadEl.textContent = '--';
+            uploadEl.textContent = '--';
+            pingEl.textContent = '--';
+            serverPing.textContent = '--';
+
+            try {
+                // Step 1: Test Ping
+                document.getElementById('speed-status').textContent = 'Testing ping...';
+                speedStatus.textContent = 'Measuring latency';
+                updateProgress(10);
+
+                const pingResults = [];
+                for (let i = 0; i < 5; i++) {
+                    const start = performance.now();
+                    await fetch('https://cloudflare.com/cdn-cgi/trace', { cache: 'no-cache' });
+                    const end = performance.now();
+                    pingResults.push(Math.round(end - start));
+                }
+                const avgPing = Math.round(pingResults.reduce((a, b) => a + b) / pingResults.length);
+                pingEl.textContent = avgPing;
+                serverPing.textContent = avgPing + 'ms';
+                updateProgress(25);
+
+                // Step 2: Test Download Speed
+                document.getElementById('speed-status').textContent = 'Testing download...';
+                speedStatus.textContent = 'Downloading test file';
+
+                const downloadSpeeds = [];
+                const testFiles = [
+                    'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js',
+                    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
+                    'https://unpkg.com/react@18/umd/react.production.min.js'
+                ];
+
+                for (let i = 0; i < testFiles.length; i++) {
+                    const startTime = performance.now();
+                    const startBytes = performance.memory ? performance.memory.usedJSHeapSize : 0;
+
+                    const response = await fetch(testFiles[i], { cache: 'no-cache' });
+                    const data = await response.blob();
+
+                    const endTime = performance.now();
+                    const duration = (endTime - startTime) / 1000; // seconds
+                    const fileSizeBytes = data.size;
+                    const fileSizeMB = fileSizeBytes / (1024 * 1024);
+                    const speedMbps = (fileSizeMB * 8) / duration; // Megabits per second
+
+                    downloadSpeeds.push(speedMbps);
+
+                    // Animate current speed
+                    const currentSpeed = Math.round(speedMbps * 10) / 10;
+                    speedValue.textContent = currentSpeed;
+                    downloadEl.textContent = currentSpeed;
+                    updateProgress(25 + (i + 1) * 15);
+                }
+
+                const avgDownload = Math.round((downloadSpeeds.reduce((a, b) => a + b) / downloadSpeeds.length) * 10) / 10;
+                downloadEl.textContent = avgDownload;
+                speedValue.textContent = avgDownload;
+                updateProgress(70);
+
+                // Step 3: Test Upload Speed (simulated with POST requests)
+                document.getElementById('speed-status').textContent = 'Testing upload...';
+                speedStatus.textContent = 'Uploading test data';
+
+                const uploadSpeeds = [];
+                const uploadData = new Blob([new ArrayBuffer(100000)]); // 100KB
+
+                for (let i = 0; i < 3; i++) {
+                    const startTime = performance.now();
+
+                    try {
+                        await fetch('https://httpbin.org/post', {
+                            method: 'POST',
+                            body: uploadData,
+                            cache: 'no-cache'
+                        });
+                    } catch (e) {
+                        // Fallback if httpbin fails
+                        await new Promise(resolve => setTimeout(resolve, 200 + Math.random() * 300));
+                    }
+
+                    const endTime = performance.now();
+                    const duration = (endTime - startTime) / 1000;
+                    const sizeMB = uploadData.size / (1024 * 1024);
+                    const speedMbps = (sizeMB * 8) / duration;
+
+                    uploadSpeeds.push(speedMbps);
+
+                    const currentSpeed = Math.round(speedMbps * 10) / 10;
+                    speedValue.textContent = currentSpeed;
+                    uploadEl.textContent = currentSpeed;
+                    updateProgress(70 + (i + 1) * 8);
+                }
+
+                const avgUpload = Math.round((uploadSpeeds.reduce((a, b) => a + b) / uploadSpeeds.length) * 10) / 10;
+                uploadEl.textContent = avgUpload;
+                updateProgress(100);
+
+                // Final result - show highest speed
+                const maxSpeed = Math.max(avgDownload, avgUpload);
+                speedValue.textContent = maxSpeed;
+                document.getElementById('speed-status').textContent = getConnectionQuality(avgDownload);
+                speedStatus.textContent = `Ping: ${avgPing}ms • ${avgDownload} Mbps`;
+
+                // Change button text
+                startBtn.innerHTML = `
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                    </svg>
+                    Test Again
+                `;
+
+            } catch (error) {
+                console.error('Speed test failed:', error);
+                document.getElementById('speed-status').textContent = 'Test Failed';
+                speedStatus.textContent = 'Unable to complete test';
+                speedValue.textContent = '!';
+            } finally {
+                startBtn.disabled = false;
+                startBtn.style.opacity = '1';
+            }
+        }
+
+        function updateProgress(percent) {
+            const circumference = 2 * Math.PI * 75; // 2πr
+            const offset = circumference - (percent / 100) * circumference;
+            document.getElementById('speed-progress').style.strokeDashoffset = offset;
+        }
+
+        function getConnectionQuality(downloadSpeed) {
+            if (downloadSpeed > 100) return 'Excellent Connection';
+            if (downloadSpeed > 50) return 'Very Good Connection';
+            if (downloadSpeed > 25) return 'Good Connection';
+            if (downloadSpeed > 10) return 'Fair Connection';
+            return 'Slow Connection';
+        }
+
+        // Initialize toggle switches
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+            toggle.addEventListener('click', function () {
+                this.classList.toggle('active');
+            });
+        });
+
+        // Redemption Code Functions
+        async function redeemCodeForNew() {
+            const codeInput = document.getElementById('redeem-code-new');
+            const button = document.getElementById('btn-redeem-new');
+            const code = codeInput.value.trim().toUpperCase();
+
+            if (!code) {
+                alert('Silakan masukkan kode penukaran');
+                return;
+            }
+
+            // Disable button
+            button.disabled = true;
+            button.textContent = 'Memproses...';
+
+            try {
+                const response = await fetch('/api/redemption/redeem/new', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ code: code })
+                });
+
+                // Log response details for debugging
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers.get('content-type'));
+
+                // Get response as text first to see what we got
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
+
+                // Try to parse as JSON
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    console.error('JSON parse error:', e);
+                    alert('❌ Server returned invalid response. Check console for details.\n\nResponse: ' + responseText.substring(0, 100));
+                    return;
+                }
+
+                if (data.success) {
+                    alert('✅ ' + data.message + '\n\nPerangkat: ' + data.device + '\nKadaluarsa: ' + new Date(data.expiresAt).toLocaleString());
+                    codeInput.value = '';
+
+                    // Reload devices
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    alert('❌ ' + data.message);
+                }
+            } catch (error) {
+                console.error('Redemption error:', error);
+                alert('❌ Terjadi kesalahan: ' + error.message);
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Tukar';
+            }
+        }
+
+        async function redeemCodeForExtend() {
+            const udidInput = document.getElementById('extend-device-udid');
+            const codeInput = document.getElementById('redeem-code-extend');
+            const button = document.getElementById('btn-redeem-extend');
+
+            const deviceUdid = udidInput.value.trim();
+            const code = codeInput.value.trim().toUpperCase();
+
+            if (!deviceUdid) {
+                alert('Silakan masukkan ID Ponsel Cloud');
+                return;
+            }
+
+            if (!code) {
+                alert('Silakan masukkan kode penukaran');
+                return;
+            }
+
+            // Disable button
+            button.disabled = true;
+            button.textContent = 'Memproses...';
+
+            try {
+                const response = await fetch('/api/redemption/redeem/extend', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        code: code,
+                        device_udid: deviceUdid
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ ' + data.message + '\n\nKadaluarsa baru: ' + new Date(data.expiresAt).toLocaleString());
+                    udidInput.value = '';
+                    codeInput.value = '';
+
+                    // Reload to show updated expiry
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    alert('❌ ' + data.message);
+                }
+            } catch (error) {
+                console.error('Redemption error:', error);
+                alert('❌ Terjadi kesalahan: ' + error.message);
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Perpanjang';
+            }
+        }
+    </script>
+
+    <!-- iPhone-Style DOKU Popup CSS -->
+    <style>
+        /* Override DOKU Popup with iPhone/iOS Modern Design */
+
+        /* Backdrop Blur (Glassmorphism) */
+        #jokul-checkout-iframe-wrapper {
+            backdrop-filter: blur(20px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+            background: rgba(0, 0, 0, 0.4) !important;
+            animation: fadeIn 0.3s ease-out !important;
+        }
+
+        /* Main Container - iOS Card Style */
+        #jokul-checkout-iframe-container {
+            border-radius: 24px !important;
+            overflow: hidden !important;
+            box-shadow:
+                0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+            max-width: 420px !important;
+            margin: auto !important;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* Smooth Slide-Up Animation (Like iOS Bottom Sheet) */
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Close Button - iOS Style */
+        #jokul-checkout-iframe-container .close-button,
+        #jokul-checkout-iframe-container button[class*="close"] {
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 50% !important;
+            width: 32px !important;
+            height: 32px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            transition: all 0.2s ease !important;
+            color: white !important;
+            font-weight: 600 !important;
+        }
+
+        #jokul-checkout-iframe-container .close-button:hover,
+        #jokul-checkout-iframe-container button[class*="close"]:hover {
+            background: rgba(255, 255, 255, 0.2) !important;
+            transform: scale(1.1) !important;
+        }
+
+        /* Iframe itself */
+        #jokul-checkout-iframe {
+            border-radius: 24px !important;
+            border: none !important;
+        }
+
+        /* For mobile - Full screen with rounded top corners */
+        @media (max-width: 768px) {
+            #jokul-checkout-iframe-container {
+                max-width: 100vw !important;
+                height: 90vh !important;
+                margin: 0 !important;
+                border-radius: 24px 24px 0 0 !important;
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+            }
+
+            @keyframes slideUp {
+                from {
+                    transform: translateY(100%);
+                }
+
+                to {
+                    transform: translateY(0);
+                }
+            }
+        }
+
+        /* Smooth transitions for all interactions */
+        * {
+            transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+
+        /* AGGRESSIVE TARGETING - All iframe wrappers */
+        body>div[style*="position"],
+        body>div[style*="z-index"],
+        div[id*="checkout"],
+        div[class*="checkout"] {
+            backdrop-filter: blur(30px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(30px) saturate(180%) !important;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(20, 20, 40, 0.7)) !important;
+        }
+
+        /* Target ALL iframes from doku domain */
+        iframe[src*="doku"] {
+            border-radius: 28px !important;
+            box-shadow:
+                0 40px 80px -12px rgba(0, 0, 0, 0.8),
+                0 0 0 2px rgba(74, 144, 226, 0.4),
+                0 0 150px rgba(74, 144, 226, 0.4) !important;
+            max-width: 440px !important;
+            border: none !important;
+            animation: iosSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            margin: 50px auto !important;
+            display: block !important;
+        }
+
+        @keyframes iosSlideUp {
+            from {
+                transform: translateY(150px) scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Mobile - Bottom sheet */
+        @media (max-width: 768px) {
+            iframe[src*="doku"] {
+                border-radius: 32px 32px 0 0 !important;
+                max-width: 100vw !important;
+                height: 94vh !important;
+                margin: 0 !important;
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+            }
+        }
+
+
+        /* CUSTOM SCROLLBAR - Modern iOS Style */
+        /* Transparent track, dark smooth thumb */
+
+        /* Webkit (Chrome, Safari, Edge) */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 3px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        /* Firefox */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 0, 0, 0.7) transparent;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+
+
+
+</body>
+
+</html>
+```

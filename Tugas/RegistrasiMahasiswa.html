@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran Mahasiswa Baru</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --background: #0f172a;
+            --surface: rgba(30, 41, 59, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 40px 20px;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.1) 0px, transparent 50%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+        }
+
+        .card {
+            background: var(--surface);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-align: center;
+            letter-spacing: -0.025em;
+            background: linear-gradient(to right, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 35px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .input-control {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--text-main);
+            outline: none;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .input-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .ql-toolbar.ql-snow {
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .ql-container.ql-snow {
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--text-main);
+            min-height: 120px;
+            font-size: 0.95rem;
+        }
+
+        .ql-editor.ql-blank::before {
+            color: var(--text-muted);
+            font-style: normal;
+        }
+
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid var(--border);
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+            border-radius: 12px;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            background: #1e293b;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+        }
+
+        .autocomplete-items div {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: background 0.15s ease;
+        }
+
+        .autocomplete-items div:hover {
+            background-color: var(--primary);
+            color: #ffffff;
+        }
+
+        .autocomplete-active {
+            background-color: var(--primary) !important;
+            color: #ffffff;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(to right, #6366f1, #4f46e5);
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+            background: linear-gradient(to right, #4f46e5, #4338ca);
+        }
+
+        .flatpickr-calendar {
+            background: #1e293b !important;
+            border: 1px solid var(--border) !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+        }
+        .flatpickr-day {
+            color: var(--text-main) !important;
+        }
+        .flatpickr-day.selected {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+        }
+        .flatpickr-months .flatpickr-month {
+            color: var(--text-main) !important;
+            fill: var(--text-main) !important;
+        }
+        .flatpickr-weekday {
+            color: var(--text-muted) !important;
+        }
+        .flatpickr-current-month .numInputWrapper span.arrowUp::after {
+            border-bottom-color: var(--text-main) !important;
+        }
+        .flatpickr-current-month .numInputWrapper span.arrowDown::after {
+            border-top-color: var(--text-main) !important;
+        }
+
+        .result-card {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            display: none;
+            width: 100%;
+        }
+
+        .result-card h2 {
+            font-size: 1.3rem;
+            color: #10b981;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .result-value {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <h1>Registrasi Mahasiswa Baru</h1>
+            <div class="subtitle">Silakan isi formulir pendaftaran di bawah ini secara lengkap</div>
+
+            <form id="regForm" onsubmit="handleRegistrationSubmit(event)">
+                
+                <div class="form-group">
+                    <label for="nama">Nama Lengkap</label>
+                    <input type="text" id="nama" required class="input-control" placeholder="Masukkan nama lengkap Anda">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Alamat Email</label>
+                    <input type="email" id="email" required class="input-control" placeholder="Masukkan alamat email aktif">
+                </div>
+
+                <div class="form-group">
+                    <label>Alamat Lengkap</label>
+                    <div id="editor"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="tanggal_lahir">Tanggal Lahir</label>
+                    <input type="text" id="tanggal_lahir" required class="input-control" placeholder="Pilih tanggal lahir Anda">
+                </div>
+
+                <div class="form-group">
+                    <label for="asal_sekolah">Asal Sekolah</label>
+                    <input type="text" id="asal_sekolah" required class="input-control" placeholder="Ketik nama SMA/SMK asal Anda" autocomplete="off">
+                </div>
+
+                <button type="submit" class="btn-submit">Simpan Pendaftaran</button>
+            </form>
+        </div>
+
+        <div class="result-card" id="resultCard">
+            <h2>✅ Pendaftaran Berhasil Disimpan!</h2>
+            <div class="result-grid">
+                <div class="result-label">Nama:</div>
+                <div class="result-value" id="resNama"></div>
+
+                <div class="result-label">Email:</div>
+                <div class="result-value" id="resEmail"></div>
+
+                <div class="result-label">Alamat:</div>
+                <div class="result-value" id="resAlamat"></div>
+
+                <div class="result-label">Tanggal Lahir:</div>
+                <div class="result-value" id="resTanggalLahir"></div>
+
+                <div class="result-label">Asal Sekolah:</div>
+                <div class="result-value" id="resAsalSekolah"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
+
+    <script>
+        const quill = new Quill('#editor', {
+            theme: 'snow',
+            placeholder: 'Tulis alamat lengkap Anda di sini...',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    ['clean']
+                ]
+            }
+        });
+
+        flatpickr("#tanggal_lahir", {
+            locale: "id",
+            dateFormat: "d-m-Y",
+            allowInput: true,
+            maxDate: "today"
+        });
+
+        const sekolahList = [
+            "SMAN 1 Jakarta", "SMAN 3 Bandung", "SMAN 8 Jakarta", "SMAN 1 Surabaya", 
+            "SMAN 2 Yogyakarta", "SMAN 1 Medan", "SMAN 1 Padang", "SMAN 1 Semarang", 
+            "SMAN 1 Makassar", "SMA Taruna Nusantara Magelang", "SMA BPK Penabur Jakarta", 
+            "SMA Kanisius Jakarta", "SMA Labschool Jakarta", "SMKN 1 Bandung", 
+            "SMKN 2 Surabaya", "SMKN 26 Jakarta", "MAN 2 Jakarta", "MAN Insan Cendekia Serpong"
+        ];
+
+        function autocomplete(inp, arr) {
+            let currentFocus;
+            inp.addEventListener("input", function(e) {
+                let a, b, i, val = this.value;
+                closeAllLists();
+                if (!val) { return false; }
+                currentFocus = -1;
+                a = document.createElement("DIV");
+                a.setAttribute("id", this.id + "autocomplete-list");
+                a.setAttribute("class", "autocomplete-items");
+                this.parentNode.appendChild(a);
+                for (i = 0; i < arr.length; i++) {
+                    if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                        b = document.createElement("DIV");
+                        b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+                        b.innerHTML += arr[i].substr(val.length);
+                        b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                        b.addEventListener("click", function(e) {
+                            inp.value = this.getElementsByTagName("input")[0].value;
+                            closeAllLists();
+                        });
+                        a.appendChild(b);
+                    }
+                }
+            });
+            inp.addEventListener("keydown", function(e) {
+                let x = document.getElementById(this.id + "autocomplete-list");
+                if (x) x = x.getElementsByTagName("div");
+                if (e.keyCode == 40) {
+                    currentFocus++;
+                    addActive(x);
+                } else if (e.keyCode == 38) {
+                    currentFocus--;
+                    addActive(x);
+                } else if (e.keyCode == 13) {
+                    e.preventDefault();
+                    if (currentFocus > -1) {
+                        if (x) x[currentFocus].click();
+                    }
+                }
+            });
+            function addActive(x) {
+                if (!x) return false;
+                removeActive(x);
+                if (currentFocus >= x.length) currentFocus = 0;
+                if (currentFocus < 0) currentFocus = (x.length - 1);
+                x[currentFocus].classList.add("autocomplete-active");
+            }
+            function removeActive(x) {
+                for (let i = 0; i < x.length; i++) {
+                    x[i].classList.remove("autocomplete-active");
+                }
+            }
+            function closeAllLists(elmnt) {
+                let x = document.getElementsByClassName("autocomplete-items");
+                for (let i = 0; i < x.length; i++) {
+                    if (elmnt != x[i] && elmnt != inp) {
+                        x[i].parentNode.removeChild(x[i]);
+                    }
+                }
+            }
+            document.addEventListener("click", function (e) {
+                closeAllLists(e.target);
+            });
+        }
+
+        autocomplete(document.getElementById("asal_sekolah"), sekolahList);
+
+        function handleRegistrationSubmit(event) {
+            event.preventDefault();
+            
+            const nama = document.getElementById('nama').value;
+            const email = document.getElementById('email').value;
+            const alamat = quill.root.innerHTML;
+            const tanggalLahir = document.getElementById('tanggal_lahir').value;
+            const asalSekolah = document.getElementById('asal_sekolah').value;
+
+            document.getElementById('resNama').innerText = nama;
+            document.getElementById('resEmail').innerText = email;
+            document.getElementById('resAlamat').innerHTML = alamat;
+            document.getElementById('resTanggalLahir').innerText = tanggalLahir;
+            document.getElementById('resAsalSekolah').innerText = asalSekolah;
+
+            document.getElementById('resultCard').style.display = 'block';
+            
+            document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

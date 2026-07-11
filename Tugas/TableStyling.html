@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Table Styling</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            padding: 30px;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            font-weight: normal;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        th, td {
+            border: 2px solid #ff0000;
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: #ff0000;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        td {
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Daftar Alamat dan Nomor Telepon Perusahaan</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nama Perusahaan</th>
+                <th>Alamat</th>
+                <th>Nomor Telp</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>PT. ABC Indonesia</td>
+                <td>Jakarta Pusat</td>
+                <td>021 - 123123</td>
+            </tr>
+            <tr>
+                <td>PT. Nusantara Abadi</td>
+                <td>Bekasi Barat</td>
+                <td>021 - 234567</td>
+            </tr>
+            <tr>
+                <td>PT. Citra Perkasa</td>
+                <td>Tangerang Selatan</td>
+                <td>021 - 567890</td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
